@@ -1,0 +1,20 @@
+# Virtual Environment & Python cache
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Executables & binary tools
+cloudflared.exe
+*.exe
+*.class
+
+# Deployment zip bundles
+*.zip
+
+# IDE & system files
+.vscode/
+.idea/
+*.swp
+.DS_Store

@@ -1,0 +1,2699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PromptEval AI | NLP-Based Prompt Engineering Assessment System</title>
+  <!-- Google Fonts for Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #0a0d14;
+      --bg-secondary: #111622;
+      --bg-card: rgba(20, 27, 41, 0.75);
+      --bg-card-hover: rgba(28, 38, 58, 0.9);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-focus: #6366f1;
+      
+      --accent-primary: #6366f1;
+      --accent-secondary: #8b5cf6;
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --gradient-brand: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+      --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 100%);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.85);
+      --bg-card-hover: rgba(241, 245, 249, 0.95);
+      --border-color: rgba(0, 0, 0, 0.08);
+      --border-focus: #4f46e5;
+      
+      --accent-primary: #4f46e5;
+      --accent-secondary: #7c3aed;
+      --accent-cyan: #0891b2;
+      --accent-emerald: #059669;
+      --accent-amber: #d97706;
+      --accent-rose: #e11d48;
+      
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      
+      --gradient-card: linear-gradient(180deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0) 100%);
+      --glass-shadow: 0 8px 32px 0 rgba(100, 116, 139, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(6, 182, 212, 0.05) 0px, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 13, 20, 0.8);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    [data-theme="light"] .navbar {
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--gradient-brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+      color: white;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover {
+      color: var(--text-main);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .theme-toggle {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+    }
+
+    .theme-toggle:hover {
+      color: var(--text-main);
+      border-color: var(--accent-primary);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--gradient-brand);
+      color: white;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-primary);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 80px 0 60px;
+      text-align: center;
+      position: relative;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.28);
+      color: #818cf8;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+      max-width: 960px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .gradient-text {
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 820px;
+      margin: 0 auto 36px;
+      line-height: 1.7;
+    }
+
+    .hero-features {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    .hero-feat-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .hero-feat-chip svg {
+      color: var(--accent-emerald);
+    }
+
+    /* Section Header */
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-tag {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-cyan);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .section-title {
+      font-size: 2.3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .section-desc {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* Interactive Assessment Playground */
+    .playground-section {
+      padding: 60px 0 100px;
+    }
+
+    .playground-wrapper {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      box-shadow: var(--glass-shadow);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+    }
+
+    .playground-wrapper::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-brand);
+    }
+
+    /* Scenario Bar */
+    .scenario-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .scenario-select-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .scenario-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .scenario-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .scenario-btn.active {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--accent-primary);
+      color: #818cf8;
+    }
+
+    .scenario-btn:hover:not(.active) {
+      background: var(--bg-card-hover);
+      color: var(--text-main);
+    }
+
+    /* Comparison Grid */
+    .prompt-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .prompt-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .prompt-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .prompt-box-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .prompt-box-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .box-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-student {
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .badge-expert {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .sample-presets {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .sample-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .sample-btn:hover {
+      border-color: var(--accent-primary);
+      color: var(--text-main);
+    }
+
+    .prompt-textarea {
+      width: 100%;
+      height: 200px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      resize: vertical;
+      outline: none;
+    }
+
+    .prompt-textarea:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+
+    .golden-prompt-display {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    .meta-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .tag-container {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    /* Action bar */
+    .assess-action-bar {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 28px 0;
+    }
+
+    .assess-btn {
+      padding: 14px 36px;
+      font-size: 1.05rem;
+    }
+
+    /* Assessment Report Area */
+    .report-container {
+      margin-top: 36px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 32px;
+      display: none;
+    }
+
+    .report-container.active {
+      display: block;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 28px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Score gauge card */
+    .score-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .gauge-circle {
+      position: relative;
+      width: 170px;
+      height: 170px;
+      margin-bottom: 16px;
+    }
+
+    .gauge-circle svg {
+      transform: rotate(-90deg);
+      width: 170px;
+      height: 170px;
+    }
+
+    .gauge-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.07);
+      stroke-width: 12;
+    }
+
+    .gauge-fill {
+      fill: none;
+      stroke: var(--accent-primary);
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: 110;
+      transition: stroke-dashoffset 1s ease-out, stroke 0.5s ease;
+    }
+
+    .gauge-center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .gauge-val {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .gauge-max {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .score-tier {
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-top: 8px;
+    }
+
+    .similarity-index {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+    }
+
+    /* Dimension Bars */
+    .dimensions-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+
+    .dim-row {
+      margin-bottom: 16px;
+    }
+
+    .dim-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .dim-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 0.92rem;
+    }
+
+    .dim-title {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dim-score-num {
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+
+    .dim-track {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .dim-bar {
+      height: 100%;
+      border-radius: 999px;
+      width: 0%;
+      transition: width 0.8s cubic-bezier(0.1, 0.8, 0.2, 1);
+    }
+
+    .bar-structure { background: linear-gradient(90deg, #6366f1, #818cf8); }
+    .bar-clarity { background: linear-gradient(90deg, #06b6d4, #38bdf8); }
+    .bar-context { background: linear-gradient(90deg, #10b981, #34d399); }
+    .bar-completeness { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+    .dim-explanation {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* Gap Analysis & Actionable Suggestions */
+    .feedback-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .feedback-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .feedback-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+
+    .feedback-card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gap-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.9rem;
+    }
+
+    .gap-item:last-child {
+      border-bottom: none;
+    }
+
+    .gap-status-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .status-missing {
+      background: rgba(244, 63, 94, 0.18);
+      color: var(--accent-rose);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+    }
+
+    .status-matched {
+      background: rgba(16, 185, 129, 0.18);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .status-partial {
+      background: rgba(245, 158, 11, 0.18);
+      color: var(--accent-amber);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+
+    .suggestion-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+    }
+
+    .suggestion-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .sug-header {
+      font-weight: 600;
+      color: #818cf8;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sug-body {
+      color: var(--text-muted);
+      font-size: 0.86rem;
+    }
+
+    /* Output Sandbox Comparison */
+    .sandbox-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+
+    .sandbox-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .sandbox-tab {
+      padding: 8px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .sandbox-tab.active {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: var(--accent-primary);
+      color: var(--text-main);
+    }
+
+    .sandbox-output {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      min-height: 140px;
+      max-height: 240px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      color: var(--text-muted);
+    }
+
+    /* 4 Dimensions Section */
+    .dimensions-section {
+      padding: 80px 0;
+    }
+
+    .rubrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 1024px) {
+      .rubrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .rubrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .rubric-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rubric-box:hover {
+      border-color: var(--border-focus);
+      transform: translateY(-4px);
+    }
+
+    .rubric-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .icon-structure { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+    .icon-clarity { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+    .icon-context { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+    .icon-completeness { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+
+    .rubric-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .rubric-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .rubric-checklist {
+      list-style: none;
+      border-top: 1px solid var(--border-color);
+      padding-top: 16px;
+    }
+
+    .rubric-checklist li {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rubric-checklist li svg {
+      color: var(--accent-primary);
+      flex-shrink: 0;
+    }
+
+    /* Architecture Flow Pipeline */
+    .arch-section {
+      padding: 80px 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .pipeline-container {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      position: relative;
+      margin-top: 48px;
+    }
+
+    @media (max-width: 1024px) {
+      .pipeline-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pipeline-step {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      position: relative;
+      text-align: center;
+    }
+
+    .step-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--gradient-brand);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin: 0 auto 14px;
+    }
+
+    .step-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .step-detail {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .step-tech {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: #818cf8;
+    }
+
+    /* Analytics Section */
+    .analytics-section {
+      padding: 80px 0;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .analytics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .analytics-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+    }
+
+    .card-header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .card-heading {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    /* Simulated Chart / Bars */
+    .cohort-progress {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .cohort-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cohort-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+    }
+
+    .cohort-bar-bg {
+      height: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .cohort-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    /* Impact Callout */
+    .impact-callout {
+      margin: 60px 0;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .impact-text h3 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .impact-text p {
+      color: var(--text-muted);
+      max-width: 650px;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      padding: 60px 0 30px;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 900px) {
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .footer-col-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-link:hover {
+      color: var(--accent-primary);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border-color);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--accent-primary);
+      color: var(--text-main);
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          </svg>
+        </div>
+        <span>PromptEval<span class="gradient-text">.AI</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#evaluator" class="nav-link">Live Evaluator</a></li>
+        <li><a href="#rubrics" class="nav-link">4 Assessment Pillars</a></li>
+        <li><a href="#architecture" class="nav-link">NLP Pipeline</a></li>
+        <li><a href="#analytics" class="nav-link">Student Analytics</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggleBtn" aria-label="Toggle theme">
+          <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <span id="themeText">Dark</span>
+        </button>
+
+        <a href="#evaluator" class="btn btn-primary">
+          <span>Try Live Assessment</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="badge-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        <span>NLP-Powered Generative AI Pedagogy</span>
+      </div>
+
+      <h1 class="hero-title">
+        Benchmarking Student Prompt Engineering with <span class="gradient-text">Semantic AI & Golden Standards</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        An intelligent Natural Language Processing system that evaluates students' LLM prompts against expert-crafted golden benchmarks. Automatically measure gaps in <strong>Structure</strong>, <strong>Clarity</strong>, <strong>Context</strong>, and <strong>Completeness</strong> with instant personalized feedback.
+      </p>
+
+      <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+        <a href="#evaluator" class="btn btn-primary" style="padding: 14px 28px; font-size: 1.05rem;">
+          <span>Launch Interactive Evaluator</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        </a>
+        <a href="#architecture" class="btn btn-secondary" style="padding: 14px 28px; font-size: 1.05rem;">
+          <span>Explore NLP Architecture</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        </a>
+      </div>
+
+      <div class="hero-features">
+        <div class="hero-feat-chip">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>Dense Semantic Embeddings</span>
+        </div>
+        <div class="hero-feat-chip">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>Structural Delimiter Parsing</span>
+        </div>
+        <div class="hero-feat-chip">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>Automated Gap Diagnostics</span>
+        </div>
+        <div class="hero-feat-chip">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>Personalized Remediation</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Evaluator Section -->
+  <section class="playground-section" id="evaluator">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Interactive Demo Engine</span>
+        <h2 class="section-title">Test & Benchmark Your Prompt</h2>
+        <p class="section-desc">Select a real-world task scenario, craft or load a student prompt, and run our NLP similarity engine to diagnose strengths and gaps against the expert golden prompt.</p>
+      </div>
+
+      <div class="playground-wrapper">
+        <!-- Scenario Bar -->
+        <div class="scenario-header">
+          <div class="scenario-select-group">
+            <span class="scenario-label">Target Task:</span>
+            <button class="scenario-btn active" data-scenario="code" onclick="selectScenario('code')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+              <span>Python Code Refactoring</span>
+            </button>
+            <button class="scenario-btn" data-scenario="tutor" onclick="selectScenario('tutor')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+              <span>Socratic AI Tutor</span>
+            </button>
+            <button class="scenario-btn" data-scenario="data" onclick="selectScenario('data')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              <span>JSON Data Extraction</span>
+            </button>
+            <button class="scenario-btn" data-scenario="creative" onclick="selectScenario('creative')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"></path><path d="M12 12L2.5 7.5"></path></svg>
+          <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div id="backendBadge" class="box-badge badge-expert" style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem;">
+              <span id="backendDot" style="color: var(--accent-emerald);">●</span>
+              <span id="backendText">PyTorch NLP Backend Active</span>
+            </div>
+            <span>Benchmark: <strong style="color: var(--accent-emerald);">Golden Standard v3.2</strong></span>
+          </div>
+        </div>
+
+        <!-- Two Prompt Boxes (Student vs Expert) -->
+        <div class="prompt-grid">
+          <!-- Student Prompt Input -->
+          <div class="prompt-box">
+            <div class="prompt-box-header">
+              <div class="prompt-box-title">
+                <span>Student Prompt</span>
+                <span class="box-badge badge-student">Candidate Input</span>
+              </div>
+              <div class="sample-presets">
+                <span style="font-size: 0.75rem; color: var(--text-dim);">Load sample:</span>
+                <button class="sample-btn" onclick="loadSample('novice')">Novice</button>
+                <button class="sample-btn" onclick="loadSample('intermediate')">Intermediate</button>
+                <button class="sample-btn" onclick="loadSample('advanced')">Advanced</button>
+              </div>
+            </div>
+
+            <textarea id="studentPromptInput" class="prompt-textarea" placeholder="Enter student prompt here to assess..."></textarea>
+            
+            <div class="meta-footer">
+              <div>
+                <span id="charCount">0</span> chars | ~<span id="tokenCount">0</span> tokens
+              </div>
+              <div id="quickLintWarning" style="color: var(--accent-amber); font-weight: 500;">
+                <!-- Realtime lint indicator -->
+              </div>
+            </div>
+
+            <div class="tag-container" id="studentFeatureTags">
+              <span class="tag">Waiting for input analysis...</span>
+            </div>
+          </div>
+
+          <!-- Expert Golden Prompt Reference -->
+          <div class="prompt-box">
+            <div class="prompt-box-header">
+              <div class="prompt-box-title">
+                <span>Expert Golden Prompt</span>
+                <span class="box-badge badge-expert">Standard of Excellence</span>
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">
+                Engineered for optimal zero-shot accuracy
+              </div>
+            </div>
+
+            <div id="goldenPromptDisplay" class="golden-prompt-display">
+              <!-- Golden prompt content loaded dynamically -->
+            </div>
+
+            <div class="meta-footer">
+              <div>
+                <span id="goldenCharCount">0</span> chars | ~<span id="goldenTokenCount">0</span> tokens
+              </div>
+              <div style="color: var(--accent-emerald);">
+                Complete Rubric Coverage (100%)
+              </div>
+            </div>
+
+            <div class="tag-container" id="goldenFeatureTags">
+              <span class="tag" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;">Role: Senior Staff Engineer</span>
+              <span class="tag" style="background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan);">Structured Output: Markdown</span>
+              <span class="tag" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">Explicit Constraints</span>
+              <span class="tag" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber);">Edge Case Handling</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="assess-action-bar">
+          <button class="btn btn-primary assess-btn" id="runAssessmentBtn" onclick="evaluatePrompt()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+            <span>Run NLP Semantic Assessment</span>
+          </button>
+          <button class="btn btn-secondary" onclick="resetToScenarioDefault()">
+            <span>Reset Demo</span>
+          </button>
+        </div>
+
+        <!-- Assessment Results Report Container -->
+        <div class="report-container" id="assessmentReport">
+          <div class="section-header" style="margin-bottom: 24px; text-align: left;">
+            <span class="section-tag" style="color: var(--accent-emerald);">Automated Evaluation Generated</span>
+            <h3 style="font-size: 1.8rem; font-weight: 800;">Assessment Scorecard & Gap Analysis</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Evaluated against semantic embeddings, structural heuristic grammars, and clarity rubrics.</p>
+          </div>
+
+          <!-- Score and Dimensions Grid -->
+          <div class="results-grid">
+            <!-- Overall Score Card -->
+            <div class="score-card">
+              <div class="gauge-circle">
+                <svg>
+                  <circle class="gauge-bg" cx="85" cy="85" r="70"></circle>
+                  <circle class="gauge-fill" id="gaugeCircleFill" cx="85" cy="85" r="70"></circle>
+                </svg>
+                <div class="gauge-center-text">
+                  <div class="gauge-val" id="scoreValueDisplay">--</div>
+                  <div class="gauge-max">out of 100</div>
+                </div>
+              </div>
+
+              <div class="score-tier" id="scoreTierBadge">Analyzing...</div>
+              
+              <div class="similarity-index">
+                <span style="color: var(--text-muted);">Cosine Semantic Similarity:</span>
+                <strong id="cosineSimilarityDisplay" style="color: var(--text-main);">0.00</strong>
+              </div>
+              <div class="similarity-index" style="margin-top: 6px; padding-top: 6px; border: none;">
+                <span style="color: var(--text-muted);">Completeness Delta:</span>
+                <strong id="completenessDeltaDisplay" style="color: var(--accent-amber);">-28%</strong>
+              </div>
+            </div>
+
+            <!-- Dimensional Scores Breakdown -->
+            <div class="dimensions-card">
+              <!-- Structure -->
+              <div class="dim-row">
+                <div class="dim-meta">
+                  <span class="dim-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                    Prompt Structure & Persona
+                  </span>
+                  <span class="dim-score-num" id="dimStructureScore">--/100</span>
+                </div>
+                <div class="dim-track">
+                  <div class="dim-bar bar-structure" id="barStructure"></div>
+                </div>
+                <div class="dim-explanation" id="dimStructureExp">Role definition, logical sequencing, and markdown delimiters.</div>
+              </div>
+
+              <!-- Clarity -->
+              <div class="dim-row">
+                <div class="dim-meta">
+                  <span class="dim-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    Clarity & Tone Precision
+                  </span>
+                  <span class="dim-score-num" id="dimClarityScore">--/100</span>
+                </div>
+                <div class="dim-track">
+                  <div class="dim-bar bar-clarity" id="barClarity"></div>
+                </div>
+                <div class="dim-explanation" id="dimClarityExp">Syntactic unambiguity, direct instructional verbs, low perplexity.</div>
+              </div>
+
+              <!-- Context -->
+              <div class="dim-row">
+                <div class="dim-meta">
+                  <span class="dim-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                    Context & Domain Specifics
+                  </span>
+                  <span class="dim-score-num" id="dimContextScore">--/100</span>
+                </div>
+                <div class="dim-track">
+                  <div class="dim-bar bar-context" id="barContext"></div>
+                </div>
+                <div class="dim-explanation" id="dimContextExp">Domain background, input framing, target audience assumptions.</div>
+              </div>
+
+              <!-- Completeness -->
+              <div class="dim-row">
+                <div class="dim-meta">
+                  <span class="dim-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    Completeness & Guardrails
+                  </span>
+                  <span class="dim-score-num" id="dimCompletenessScore">--/100</span>
+                </div>
+                <div class="dim-track">
+                  <div class="dim-bar bar-completeness" id="barCompleteness"></div>
+                </div>
+                <div class="dim-explanation" id="dimCompletenessExp">Output schema format, negative constraints, and handling edge cases.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gap Analysis & Personalized Suggestions -->
+          <div class="feedback-grid">
+            <!-- Gap Analysis -->
+            <div class="feedback-card">
+              <div class="feedback-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                <span>Semantic Gap Analysis (vs. Golden Prompt)</span>
+              </div>
+              <div id="gapItemsList">
+                <!-- Dynamically filled -->
+              </div>
+            </div>
+
+            <!-- Actionable Improvement Suggestions -->
+            <div class="feedback-card">
+              <div class="feedback-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                <span>Personalized Pedagogical Suggestions</span>
+              </div>
+              <div id="suggestionItemsList">
+                <!-- Dynamically filled -->
+              </div>
+              <button class="btn btn-secondary" style="width: 100%; margin-top: 14px; font-size: 0.88rem;" onclick="applyOptimizedRewrite()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                <span>Auto-Apply Recommended Improvements to Input</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Execution Sandbox Simulation -->
+          <div class="sandbox-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <h4 style="font-size: 1.1rem; font-weight: 700;">Live LLM Output Simulation</h4>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">See how the generative model responds to the student prompt compared to the golden prompt.</p>
+              </div>
+              <div class="sandbox-tabs">
+                <button class="sandbox-tab active" id="tabStudentOutput" onclick="switchSandboxTab('student')">Response with Student Prompt</button>
+                <button class="sandbox-tab" id="tabGoldenOutput" onclick="switchSandboxTab('golden')">Response with Golden Prompt</button>
+              </div>
+            </div>
+            <div class="sandbox-output" id="sandboxOutputText">
+              <!-- Simulated response text -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 Pillars of Evaluation Section -->
+  <section class="dimensions-section" id="rubrics">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Evaluation Framework</span>
+        <h2 class="section-title">The 4 Pillars of Prompt Assessment</h2>
+        <p class="section-desc">Our NLP system deconstructs prompts into multi-dimensional rubrics, assessing linguistic intent, structural anchors, and constraints.</p>
+      </div>
+
+      <div class="rubrics-grid">
+        <!-- Pillar 1: Structure -->
+        <div class="rubric-box">
+          <div class="rubric-icon icon-structure">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+          </div>
+          <h3 class="rubric-title">1. Structure</h3>
+          <p class="rubric-desc">Evaluates organizational taxonomy, role definitions, and delimitation of input data.</p>
+          <ul class="rubric-checklist">
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Explicit Role Persona (e.g. "Act as a...")</span>
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Markdown headers & XML delimiters</span>
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Sequential step-by-step directives</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Pillar 2: Clarity -->
+        <div class="rubric-box">
+          <div class="rubric-icon icon-clarity">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          </div>
+          <h3 class="rubric-title">2. Clarity</h3>
+          <p class="rubric-desc">Detects lexical ambiguity, contradictory phrasing, and instruction conciseness.</p>
+          <ul class="rubric-checklist">
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Direct imperative verbs</span>
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Elimination of vagueness / fluff</span>
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Predictable tone & audience level</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Pillar 3: Context -->
+        <div class="rubric-box">
+          <div class="rubric-icon icon-context">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+          </div>
+          <h3 class="rubric-title">3. Context</h3>
+          <p class="rubric-desc">Validates sufficient background knowledge, domain constraints, and example injection.</p>
+          <ul class="rubric-checklist">
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Target audience specification</span>
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Few-shot exemplar demonstrations</span>
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Domain vocabulary anchors</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Pillar 4: Completeness -->
+        <div class="rubric-box">
+          <div class="rubric-icon icon-completeness">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          </div>
+          <h3 class="rubric-title">4. Completeness</h3>
+          <p class="rubric-desc">Ensures safety boundaries, output schema adherence, and edge-case prevention.</p>
+          <ul class="rubric-checklist">
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Strict format schemas (JSON/Markdown)</span>
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Length & boundary restrictions</span>
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Negative constraints (what NOT to do)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Pipeline / Architecture -->
+  <section class="arch-section" id="architecture">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">System Engineering</span>
+        <h2 class="section-title">The NLP Assessment Architecture</h2>
+        <p class="section-desc">From student prompt input to vector similarity modeling and personalized LLM feedback loops.</p>
+      </div>
+
+      <div class="pipeline-container">
+        <!-- Step 1 -->
+        <div class="pipeline-step">
+          <div class="step-badge">1</div>
+          <h4 class="step-title">Prompt Ingestion & Normalization</h4>
+          <p class="step-detail">Lexical normalization, syntax parsing, and detection of markdown/XML tags.</p>
+          <span class="step-tech">Regex + Spacy Tokenizer</span>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="pipeline-step">
+          <div class="step-badge">2</div>
+          <h4 class="step-title">Embedding Generation</h4>
+          <p class="step-detail">Extracting dense 768-dim embeddings of candidate vs. golden prompts.</p>
+          <span class="step-tech">Sentence-Transformers</span>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="pipeline-step">
+          <div class="step-badge">3</div>
+          <h4 class="step-title">Semantic Cosine & Cross-Attention</h4>
+          <p class="step-detail">Computing semantic distance and cross-encoder token alignment score.</p>
+          <span class="step-tech">Cosine Sim + Cross-Encoder</span>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="pipeline-step">
+          <div class="step-badge">4</div>
+          <h4 class="step-title">Multi-Rubric Scoring Model</h4>
+          <p class="step-detail">Weighted composite scoring across Structure, Clarity, Context, and Completeness.</p>
+          <span class="step-tech">Rule-Engine + Regression</span>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="pipeline-step">
+          <div class="step-badge">5</div>
+          <h4 class="step-title">Personalized Feedback Agent</h4>
+          <p class="step-detail">Generating prescriptive rewrite suggestions and educational guidance.</p>
+          <span class="step-tech">LLM Feedback Pipeline</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Student & Cohort Analytics Preview -->
+  <section class="analytics-section" id="analytics">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Pedagogical Insights</span>
+        <h2 class="section-title">Instructor & Student Analytics Dashboard</h2>
+        <p class="section-desc">Real-time learning telemetry showing skill progression and cohort-wide prompt engineering gaps.</p>
+      </div>
+
+      <div class="analytics-grid">
+        <!-- Student Progression -->
+        <div class="analytics-card">
+          <div class="card-header-flex">
+            <div>
+              <div class="card-heading">Student Skill Progression (5 Iterations)</div>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Demonstrating rapid mastery via AI feedback loop</p>
+            </div>
+            <span class="box-badge badge-student">+42% Growth</span>
+          </div>
+
+          <div class="cohort-progress">
+            <div class="cohort-row">
+              <div class="cohort-info">
+                <span>Attempt 1: Unstructured Question</span>
+                <strong style="color: var(--accent-rose);">42 / 100</strong>
+              </div>
+              <div class="cohort-bar-bg">
+                <div class="cohort-bar-fill" style="width: 42%; background: var(--accent-rose);"></div>
+              </div>
+            </div>
+
+            <div class="cohort-row">
+              <div class="cohort-info">
+                <span>Attempt 2: Added Basic Role</span>
+                <strong style="color: var(--accent-amber);">58 / 100</strong>
+              </div>
+              <div class="cohort-bar-bg">
+                <div class="cohort-bar-fill" style="width: 58%; background: var(--accent-amber);"></div>
+              </div>
+            </div>
+
+            <div class="cohort-row">
+              <div class="cohort-info">
+                <span>Attempt 3: Defined Markdown Output</span>
+                <strong style="color: #818cf8;">73 / 100</strong>
+              </div>
+              <div class="cohort-bar-bg">
+                <div class="cohort-bar-fill" style="width: 73%; background: #818cf8;"></div>
+              </div>
+            </div>
+
+            <div class="cohort-row">
+              <div class="cohort-info">
+                <span>Attempt 4: Specified Edge Cases</span>
+                <strong style="color: var(--accent-cyan);">86 / 100</strong>
+              </div>
+              <div class="cohort-bar-bg">
+                <div class="cohort-bar-fill" style="width: 86%; background: var(--accent-cyan);"></div>
+              </div>
+            </div>
+
+            <div class="cohort-row">
+              <div class="cohort-info">
+                <span>Attempt 5: Golden Benchmark Alignment</span>
+                <strong style="color: var(--accent-emerald);">96 / 100</strong>
+              </div>
+              <div class="cohort-bar-bg">
+                <div class="cohort-bar-fill" style="width: 96%; background: var(--accent-emerald);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cohort Most Common Weaknesses -->
+        <div class="analytics-card">
+          <div class="card-header-flex">
+            <div>
+              <div class="card-heading">Cohort-Wide Common Prompting Gaps</div>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Aggregated diagnostics across 450+ student submissions</p>
+            </div>
+            <span class="box-badge badge-expert">Cohort N=450</span>
+          </div>
+
+          <div class="cohort-progress">
+            <div class="cohort-row">
+              <div class="cohort-info">
+                <span>Missing Negative Constraints (What NOT to do)</span>
+                <strong style="color: var(--accent-rose);">74% of students</strong>
+              </div>
+              <div class="cohort-bar-bg">
+                <div class="cohort-bar-fill" style="width: 74%; background: var(--accent-rose);"></div>
+              </div>
+            </div>
+
+            <div class="cohort-row">
+              <div class="cohort-info">
+                <span>Vague Output Format / Missing Schema</span>
+                <strong style="color: var(--accent-amber);">62% of students</strong>
+              </div>
+              <div class="cohort-bar-bg">
+                <div class="cohort-bar-fill" style="width: 62%; background: var(--accent-amber);"></div>
+              </div>
+            </div>
+
+            <div class="cohort-row">
+              <div class="cohort-info">
+                <span>Lack of Target Audience / Persona Framing</span>
+                <strong style="color: #818cf8;">49% of students</strong>
+              </div>
+              <div class="cohort-bar-bg">
+                <div class="cohort-bar-fill" style="width: 49%; background: #818cf8;"></div>
+              </div>
+            </div>
+
+            <div class="cohort-row">
+              <div class="cohort-info">
+                <span>Absence of Few-Shot Examples</span>
+                <strong style="color: var(--accent-cyan);">38% of students</strong>
+              </div>
+              <div class="cohort-bar-bg">
+                <div class="cohort-bar-fill" style="width: 38%; background: var(--accent-cyan);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Impact Callout Banner -->
+      <div class="impact-callout">
+        <div class="impact-text">
+          <h3>Elevate Your Generative AI Curriculum</h3>
+          <p>Transform prompt engineering from superstitious guessing into a rigorous, measurable computer science skill. Integrates directly with LMS, Jupyter notebooks, and classroom autograders.</p>
+        </div>
+        <button class="btn btn-primary" onclick="exportReportData()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>Export Benchmark Data (.JSON)</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="#" class="brand" style="margin-bottom: 16px;">
+            <div class="brand-icon" style="width: 32px; height: 32px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            </div>
+            <span>PromptEval<span class="gradient-text">.AI</span></span>
+          </a>
+          <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6; max-width: 320px;">
+            An NLP-based educational framework empowering students to bridge the gap between novice prompts and expert LLM directives.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Evaluation Pillars</div>
+          <ul class="footer-links">
+            <li><a href="#rubrics" class="footer-link">Structural Modeling</a></li>
+            <li><a href="#rubrics" class="footer-link">Linguistic Clarity</a></li>
+            <li><a href="#rubrics" class="footer-link">Context Enrichment</a></li>
+            <li><a href="#rubrics" class="footer-link">Completeness & Schema</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Technology</div>
+          <ul class="footer-links">
+            <li><a href="#architecture" class="footer-link">Semantic Embeddings</a></li>
+            <li><a href="#architecture" class="footer-link">Cosine Gap Analysis</a></li>
+            <li><a href="#architecture" class="footer-link">Golden Prompt Repository</a></li>
+            <li><a href="#architecture" class="footer-link">LLM Remediation Agent</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Academic Use</div>
+          <ul class="footer-links">
+            <li><a href="#analytics" class="footer-link">LMS Autograding</a></li>
+            <li><a href="#analytics" class="footer-link">Classroom Telemetry</a></li>
+            <li><a href="#analytics" class="footer-link">Curriculum Design</a></li>
+            <li><a href="#evaluator" class="footer-link">Interactive Sandbox</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          NLP-Based Prompt Engineering Assessment System &copy; 2026. Advancing Generative AI Education.
+        </div>
+        <div style="display: flex; gap: 20px;">
+          <span>Research Prototype</span>
+          <span>Open Benchmark</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast for User Interaction -->
+  <div class="toast" id="toastNotification">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span id="toastMessage">Success</span>
+  </div>
+
+  <script>
+    /* =========================================================================
+       SCENARIO DATABASE & EXPERT GOLDEN PROMPTS
+       ========================================================================= */
+    const scenarios = {
+      code: {
+        title: "Python Code Refactoring",
+        goldenPrompt: `You are a Senior Staff Python Engineer and Code Reviewer.
+Your task is to refactor the provided Python code snippet to optimize runtime complexity, enforce PEP 8 style standards, and enhance readability.
+
+Context & Rules:
+- The target environment is Python 3.12+.
+- The refactored solution must be accompanied by comprehensive docstrings in Google format with type annotations.
+- Include an asymptotic analysis (Big-O time and space complexity) comparing the original vs. refactored implementation.
+
+Constraints:
+- Do not introduce external dependencies outside the Python Standard Library.
+- If edge cases (e.g. empty lists, null inputs, negative integers) exist, handle them with clear exceptions.
+- Output Format: Provide your response in valid Markdown using code blocks for the refactored code followed by bulleted explanations.`,
+        samples: {
+          novice: "Make this python code faster and fix bugs please.",
+          intermediate: "Refactor this python code for better performance and add docstrings so other developers can understand it.",
+          advanced: "Act as a Python engineer. Refactor the code for O(n) performance, add type hints and docstrings. Explain the complexity differences."
+        },
+        outputs: {
+          student: `Here is a refactored version:
+
+def calc(a):
+    return [x*2 for x in a if x > 0]
+
+I made it use a list comprehension which is faster in Python!`,
+          golden: `### Refactored Python Implementation
+
+\`\`\`python
+from typing import Sequence
+
+def process_positive_doubles(numbers: Sequence[int | float]) -> list[int | float]:
+    """Filters positive values from an input sequence and doubles each element.
+
+    Args:
+        numbers: A sequence of numeric elements (ints or floats).
+
+    Returns:
+        A list containing doubled values of all strictly positive inputs.
+
+    Raises:
+        TypeError: If the input sequence is None or contains non-numeric elements.
+    """
+    if numbers is None:
+        raise TypeError("Input sequence cannot be None")
+
+    # Linear scan with vector-optimized list comprehension
+    return [num * 2 for num in numbers if num > 0]
+\`\`\`
+
+### Asymptotic Analysis
+- **Original Complexity**: O(n²) time / O(n) space
+- **Refactored Complexity**: O(n) time / O(n) space
+
+### Key Enhancements
+1. Enforced strict PEP 484 type annotations (\`Sequence[int | float]\`).
+2. Handled edge case where \`numbers is None\`.
+3. Standardized Google-style docstrings with explicit parameter contracts.`
+        },
+        improvedPrompt: `You are a Senior Staff Python Engineer.
+Refactor the provided Python code to optimize runtime complexity to O(n) and conform to PEP 8 standards.
+
+Requirements:
+- Add comprehensive type hints and Google-style docstrings.
+- Handle edge cases including empty inputs and invalid types.
+- Provide a Big-O complexity comparison.
+- Format the response in structured Markdown.`
+      },
+
+      tutor: {
+        title: "Socratic AI Tutor",
+        goldenPrompt: `You are a patient, encouraging Socratic Math Tutor specializing in high school calculus.
+Your goal is to guide the student toward discovering the concept of derivatives and instantaneous rate of change on their own.
+
+Pedagogical Rules:
+- Never provide direct answers or final equations upfront.
+- Ask targeted, thought-provoking guiding questions one step at a time.
+- Connect mathematical concepts to real-world physical intuition (such as speedometer readings in an accelerating car).
+- If the student makes a misconception, validate their effort, gently highlight the discrepancy, and ask a scaffolding question.
+
+Output Style:
+- Friendly, warm, and conversational.
+- Limit each response to 2-3 sentences followed by exactly ONE reflective question.`,
+        samples: {
+          novice: "Teach me calculus step by step.",
+          intermediate: "Act as a math tutor. Help me understand what a derivative is without giving me the answer immediately.",
+          advanced: "You are a Socratic tutor for high school calculus. Guide me to understand derivatives through real-life analogies. Ask one question at a time and don't give away the solution."
+        },
+        outputs: {
+          student: `Calculus is about change! A derivative is the slope of a curve: f'(x) = lim (f(x+h)-f(x))/h as h approaches 0. Do you get it?`,
+          golden: `Welcome! Imagine you're on a highway and look down at your speedometer reading 65 mph. That speedometer tells you how fast you're going at that exact split second, rather than your average speed over the entire two-hour trip.
+
+If average speed is distance divided by elapsed time, how might we calculate speed if the elapsed time shrinks down to almost zero seconds?`
+        },
+        improvedPrompt: `You are a Socratic high school calculus tutor.
+Guide the student to intuitively understand derivatives and instantaneous rate of change.
+
+Rules:
+- Never reveal formulas directly; use the analogy of a car speedometer.
+- Guide step-by-step with 1 targeted question per turn.
+- Be encouraging, concise, and pedagogical.`
+      },
+
+      data: {
+        title: "JSON Data Extraction",
+        goldenPrompt: `You are a specialized Data Extraction Engine.
+Analyze the unformatted customer inquiry text and extract key entities into a strictly formatted JSON object.
+
+Target Schema:
+{
+  "customer_id": string or null,
+  "sentiment": "positive" | "neutral" | "negative",
+  "urgency": "low" | "medium" | "high",
+  "product_mentions": string[],
+  "core_issue": string,
+  "action_required": boolean
+}
+
+Constraints:
+- Output ONLY valid, parsable RFC 8259 JSON.
+- Do not wrap the JSON in commentary, introductory remarks, or conversational filler.
+- If an entity is missing or ambiguous, populate with null rather than guessing.`,
+        samples: {
+          novice: "Get the customer info from this message and put it in JSON.",
+          intermediate: "Extract customer ID, sentiment, and product mentioned from this email into JSON format.",
+          advanced: "Extract customer details from the text. Return only valid JSON with fields for customer_id, sentiment, urgency, and core issue. Do not include markdown chatter."
+        },
+        outputs: {
+          student: `Sure! Here is the JSON data you requested:
+{
+  "customer": "John Doe",
+  "sentiment": "bad",
+  "product": "AirFlow 3000"
+}
+Hope this helps! Let me know if you need anything else!`,
+          golden: `{
+  "customer_id": "CUST-84920",
+  "sentiment": "negative",
+  "urgency": "high",
+  "product_mentions": ["AirFlow 3000 Pro", "HEPA Filter B"],
+  "core_issue": "Device motor smoking upon initial power-up",
+  "action_required": true
+}`
+        },
+        improvedPrompt: `You are an automated Data Extraction Engine.
+Extract customer ticket entities into a strict RFC 8259 JSON object matching this schema:
+{ customer_id, sentiment, urgency, product_mentions: [], core_issue, action_required: boolean }
+
+Constraints:
+- Output ONLY raw valid JSON without conversational wrapper text.
+- Fill missing fields with null.`
+      },
+
+      creative: {
+        title: "Executive Briefing",
+        goldenPrompt: `You are a Chief Strategy Officer and Executive Communications Director.
+Your task is to synthesize the provided 20-page quarterly performance report into a concise 1-page C-suite Executive Briefing.
+
+Structure Requirements:
+1. Executive Summary (Max 3 bullet points highlighting top strategic milestones).
+2. Key Quantitative KPI Delta (Revenue, Net Retention, CAC, Runway in a formatted Markdown table).
+3. Critical Operational Risks & Headwinds.
+4. Strategic Decisions Required from the Board.
+
+Tone & Format:
+- Direct, data-grounded, objective, and executive-ready.
+- Use bolding for figures and percentage deltas.
+- Total response length must not exceed 450 words.`,
+        samples: {
+          novice: "Summarize this quarterly report for the executives.",
+          intermediate: "Write a summary of this report for the CEO with bullet points and main numbers.",
+          advanced: "Act as an executive assistant. Summarize this quarterly report for C-suite leaders. Include KPIs, main risks, and keep it under 400 words."
+        },
+        outputs: {
+          student: `Summary:
+This quarter was great! We made more money than last year and our team grew. There were some delays with shipping but overall everything is going well. The CEO should invest more in marketing.`,
+          golden: `# Q3 Executive Briefing: Board of Directors
+
+### 1. Executive Highlights
+- **ARR Expansion**: Surpassed **$42.5M ARR (+34% YoY)**, beating consensus by **$1.8M**.
+- **Efficiency Milestone**: Reached **Cash-Flow Breakeven** 2 quarters ahead of target.
+- **Enterprise Velocity**: Closed **14 Fortune 500 accounts**; Net Retention Rate maintained at **128%**.
+
+### 2. Core KPI Matrix
+| Metric | Q3 Actual | Q2 Actual | YoY Delta |
+| :--- | :--- | :--- | :--- |
+| **Gross Margin** | **78.4%** | 76.1% | **+230 bps** |
+| **CAC Payback** | **11.2 mo** | 14.1 mo | **-2.9 mo** |
+| **Burn Multiple**| **0.4x** | 0.9x | **-0.5x** |
+
+### 3. Key Risks & Board Action Items
+- **EU Regulatory Horizon**: GDPR-AI audit requires $400K compliance allocation.
+- **Board Decision**: Approval sought for Series C expansion reserve.`
+        },
+        improvedPrompt: `You are a Chief Strategy Officer.
+Transform the report into a high-impact C-Suite Executive Briefing.
+
+Sections:
+1. Top 3 Strategic Milestones
+2. KPI Matrix (ARR, Gross Margin, CAC Payback in Markdown table)
+3. Critical Headwinds & Decisions Required
+
+Tone & Style:
+- Data-grounded, bold numbers, max 400 words.`
+      }
+    };
+
+    let currentScenarioKey = 'code';
+    let currentEvaluation = null;
+
+    /* =========================================================================
+       INITIALIZATION & SCENARIO SELECTION
+       ========================================================================= */
+    function init() {
+      selectScenario('code', true);
+      setupInputListeners();
+    }
+
+    function selectScenario(key, autoEval = true) {
+      currentScenarioKey = key;
+      const scen = scenarios[key];
+
+      // Update scenario buttons
+      document.querySelectorAll('.scenario-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.scenario === key);
+      });
+
+      // Update Golden Prompt display
+      const goldenBox = document.getElementById('goldenPromptDisplay');
+      goldenBox.innerText = scen.goldenPrompt;
+      document.getElementById('goldenCharCount').innerText = scen.goldenPrompt.length;
+      document.getElementById('goldenTokenCount').innerText = Math.round(scen.goldenPrompt.length / 4);
+
+      // Load intermediate sample prompt
+      loadSample('intermediate', false);
+
+      // Ensure report container is active and evaluate
+      const reportEl = document.getElementById('assessmentReport');
+      reportEl.classList.add('active');
+
+      if (autoEval) {
+        evaluatePrompt(false);
+      }
+    }
+
+    function loadSample(level, autoEval = true) {
+      const scen = scenarios[currentScenarioKey];
+      const promptInput = document.getElementById('studentPromptInput');
+      promptInput.value = scen.samples[level] || "";
+      updateCounts();
+      analyzeQuickLint();
+
+      if (autoEval) {
+        evaluatePrompt(false);
+      }
+      showToast(`Loaded ${level.toUpperCase()} sample prompt`);
+    }
+
+    function resetToScenarioDefault() {
+      loadSample('novice', true);
+      showToast("Reset demo state");
+    }
+
+    /* =========================================================================
+       TEXTAREA & LINTING ENGINE
+       ========================================================================= */
+    function setupInputListeners() {
+      const textarea = document.getElementById('studentPromptInput');
+      textarea.addEventListener('input', () => {
+        updateCounts();
+        analyzeQuickLint();
+      });
+    }
+
+    function updateCounts() {
+      const text = document.getElementById('studentPromptInput').value;
+      const charCount = text.length;
+      const tokenCount = Math.round(charCount / 4);
+
+      document.getElementById('charCount').innerText = charCount;
+      document.getElementById('tokenCount').innerText = tokenCount;
+    }
+
+    function analyzeQuickLint() {
+      const text = document.getElementById('studentPromptInput').value.toLowerCase();
+      const warningEl = document.getElementById('quickLintWarning');
+      const tagsContainer = document.getElementById('studentFeatureTags');
+
+      if (!text.trim()) {
+        warningEl.innerText = "";
+        tagsContainer.innerHTML = '<span class="tag">Empty prompt</span>';
+        return;
+      }
+
+      // Feature detection heuristics
+      const hasPersona = /(act as|you are|role|expert|engineer|tutor|officer|assistant)/i.test(text);
+      const hasFormat = /(json|markdown|table|bullet|list|schema|format|code block)/i.test(text);
+      const hasConstraint = /(do not|never|only|limit|max|without|exclude|strictly)/i.test(text);
+      const hasContext = /(because|context|high school|quarterly|pep 8|python|data)/i.test(text);
+
+      let tagsHtml = '';
+      if (hasPersona) tagsHtml += '<span class="tag" style="color:#818cf8;">✓ Persona Defined</span>';
+      else tagsHtml += '<span class="tag" style="color:var(--accent-rose);">✗ No Persona</span>';
+
+      if (hasFormat) tagsHtml += '<span class="tag" style="color:var(--accent-cyan);">✓ Format Specified</span>';
+      else tagsHtml += '<span class="tag" style="color:var(--accent-amber);">△ Vague Format</span>';
+
+      if (hasConstraint) tagsHtml += '<span class="tag" style="color:var(--accent-emerald);">✓ Constraints Present</span>';
+      else tagsHtml += '<span class="tag" style="color:var(--accent-rose);">✗ Missing Constraints</span>';
+
+      tagsContainer.innerHTML = tagsHtml;
+
+      if (!hasPersona && !hasFormat) {
+        warningEl.innerText = "⚠️ Missing role and output format";
+      } else if (!hasConstraint) {
+        warningEl.innerText = "💡 Tip: Add negative constraints";
+      } else {
+        warningEl.innerText = "✨ Good foundation detected";
+      }
+    }
+
+    /* =========================================================================
+       NLP EVALUATION & SIMILARITY ALGORITHM (PyTorch + SentenceTransformers API)
+       ========================================================================= */
+    async function evaluatePrompt(withAnimation = true) {
+      const studentText = document.getElementById('studentPromptInput').value.trim();
+      const scen = scenarios[currentScenarioKey];
+      const goldenText = scen.goldenPrompt;
+
+      if (!studentText) {
+        showToast("Please enter a prompt to assess!");
+        return;
+      }
+
+      const reportEl = document.getElementById('assessmentReport');
+      reportEl.classList.add('active');
+
+      const runBtn = document.getElementById('runAssessmentBtn');
+      const originalHtml = runBtn ? runBtn.innerHTML : "";
+
+      if (withAnimation && runBtn) {
+        runBtn.innerHTML = `
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;">
+            <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+            <path d="M12 2a10 10 0 0 1 10 10"></path>
+          </svg>
+          <span>Running PyTorch Embeddings...</span>
+        `;
+        runBtn.disabled = true;
+      }
+
+      let backendSuccess = false;
+      try {
+        const response = await fetch('/api/assess', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            scenario: currentScenarioKey,
+            student_prompt: studentText,
+            golden_prompt: goldenText
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.status === 'success' && data.results) {
+            renderBackendResults(data.results, scen);
+            backendSuccess = true;
+            updateBackendBadge(true);
+          }
+        }
+      } catch (err) {
+        backendSuccess = false;
+      }
+
+      if (!backendSuccess) {
+        calculateNLPResults(studentText, goldenText, scen);
+        updateBackendBadge(false);
+      }
+
+      if (withAnimation && runBtn) {
+        setTimeout(() => {
+          runBtn.innerHTML = originalHtml;
+          runBtn.disabled = false;
+          reportEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          showToast(backendSuccess ? "PyTorch NLP Model assessment complete!" : "Assessment complete (client mode)!");
+        }, 400);
+      }
+    }
+
+    function renderBackendResults(res, scen) {
+      renderScores(
+        res.overall_score,
+        res.dimensions.structure.score,
+        res.dimensions.clarity.score,
+        res.dimensions.context.score,
+        res.dimensions.completeness.score,
+        res.semantic_similarity
+      );
+
+      // Render Gap Analysis
+      const gapContainer = document.getElementById('gapItemsList');
+      let gapHtml = '';
+      res.gap_analysis.forEach(g => {
+        const iconClass = g.status === 'matched' ? 'status-matched' : (g.status === 'partial' ? 'status-partial' : 'status-missing');
+        const iconSymbol = g.status === 'matched' ? '✓' : (g.status === 'partial' ? '△' : '✗');
+        gapHtml += `
+          <div class="gap-item">
+            <div class="gap-status-icon ${iconClass}">${iconSymbol}</div>
+            <div><strong>${g.title}:</strong> ${g.description}</div>
+          </div>`;
+      });
+      gapContainer.innerHTML = gapHtml;
+
+      // Render Suggestions
+      const sugContainer = document.getElementById('suggestionItemsList');
+      let sugHtml = '';
+      res.suggestions.forEach(s => {
+        sugHtml += `
+          <div class="suggestion-item">
+            <div class="sug-header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+              ${s.title}
+            </div>
+            <div class="sug-body">${s.body}</div>
+          </div>`;
+      });
+      sugContainer.innerHTML = sugHtml;
+
+      // Update Sandbox
+      currentEvaluation = {
+        studentOutput: res.outputs.student,
+        goldenOutput: res.outputs.golden
+      };
+      switchSandboxTab('student');
+    }
+
+    function updateBackendBadge(isLive) {
+      const badge = document.getElementById('backendBadge');
+      const dot = document.getElementById('backendDot');
+      const text = document.getElementById('backendText');
+      if (!badge || !dot || !text) return;
+
+      if (isLive) {
+        badge.className = "box-badge badge-expert";
+        dot.style.color = "var(--accent-emerald)";
+        text.innerText = "PyTorch Sentence-Transformers (all-MiniLM-L6-v2) Active";
+      } else {
+        badge.className = "box-badge badge-student";
+        dot.style.color = "var(--accent-cyan)";
+        text.innerText = "Standalone Mode (Run 'python app.py' for PyTorch Model)";
+      }
+    }
+
+    function calculateNLPResults(student, golden, scen) {
+      const sLower = student.toLowerCase();
+      const gLower = golden.toLowerCase();
+
+      // 1. Vector overlap & Jaccard / Cosine approximation
+      const sTokens = new Set(sLower.match(/\b\w{3,}\b/g) || []);
+      const gTokens = new Set(gLower.match(/\b\w{3,}\b/g) || []);
+      
+      let intersection = 0;
+      sTokens.forEach(token => {
+        if (gTokens.has(token)) intersection++;
+      });
+      
+      const union = new Set([...sTokens, ...gTokens]).size || 1;
+      const jaccard = intersection / union;
+      
+      // Token length ratio
+      const lengthRatio = Math.min(student.length / (golden.length * 0.7), 1.0);
+
+      // Semantic Cosine Sim Approximation (Hybrid vector model: lexical alignment + structural depth)
+      const baseCosine = Math.min(0.35 + (jaccard * 0.45) + (lengthRatio * 0.2), 0.98);
+
+      // 2. Pillar 1: Structure (Role, delims, steps)
+      let structScore = 30;
+      if (/(act as|you are|role|specializing|expert|officer|engineer|tutor)/i.test(student)) structScore += 30;
+      if (/(task is|goal is|objective|step|first|then|next)/i.test(student)) structScore += 20;
+      if (/(markdown|bullets|headers|sections|delimiter|rfc|json|table)/i.test(student)) structScore += 20;
+      structScore = Math.min(structScore, 100);
+
+      // 3. Pillar 2: Clarity (Direct directives, no fluff, concise intent)
+      let clarityScore = 40;
+      const wordCount = (student.match(/\b\w+\b/g) || []).length;
+      if (wordCount >= 10 && wordCount <= 120) clarityScore += 30;
+      else if (wordCount > 120) clarityScore += 15;
+      if (!/(please|maybe|can you|if you want|could you)/i.test(student)) clarityScore += 20;
+      if (/(explain|refactor|guide|extract|synthesize|optimize|ensure|populate)/i.test(student)) clarityScore += 10;
+      clarityScore = Math.min(clarityScore, 100);
+
+      // 4. Pillar 3: Context (Domain specifics, audience, background)
+      let contextScore = 30;
+      if (currentScenarioKey === 'code' && /(python|pep 8|complexity|runtime|docstring|type|big-o)/i.test(student)) contextScore += 50;
+      if (currentScenarioKey === 'tutor' && /(calculus|socratic|math|question|speedometer|analogy)/i.test(student)) contextScore += 50;
+      if (currentScenarioKey === 'data' && /(customer|schema|urgency|sentiment|rfc|null)/i.test(student)) contextScore += 50;
+      if (currentScenarioKey === 'creative' && /(executive|c-suite|kpi|milestone|board|quarterly)/i.test(student)) contextScore += 50;
+      if (student.length > 80) contextScore += 20;
+      contextScore = Math.min(contextScore, 100);
+
+      // 5. Pillar 4: Completeness & Guardrails
+      let compScore = 20;
+      if (/(do not|never|only|strictly|without|limit|max|except)/i.test(student)) compScore += 35;
+      if (/(json|markdown|table|schema|format|code block)/i.test(student)) compScore += 25;
+      if (/(edge case|null|empty|error|exception|ambiguous|risk)/i.test(student)) compScore += 20;
+      compScore = Math.min(compScore, 100);
+
+      // Overall Composite Score (Weighted: 25% each)
+      const overallScore = Math.round((structScore * 0.25) + (clarityScore * 0.25) + (contextScore * 0.25) + (compScore * 0.25));
+
+      // Render Gauges and Meters
+      renderScores(overallScore, structScore, clarityScore, contextScore, compScore, baseCosine);
+
+      // Render Gap Analysis & Suggestions
+      renderGapAndSuggestions(student, scen, {
+        hasRole: structScore >= 60,
+        hasFormat: compScore >= 45,
+        hasGuardrails: compScore >= 55,
+        hasContext: contextScore >= 70
+      });
+
+      // Update Sandbox
+      currentEvaluation = {
+        studentOutput: scen.outputs.student,
+        goldenOutput: scen.outputs.golden
+      };
+      switchSandboxTab('student');
+    }
+
+    function renderScores(overall, struct, clarity, context, comp, cosine) {
+      // Gauge Circle Animation
+      const scoreVal = document.getElementById('scoreValueDisplay');
+      scoreVal.innerText = overall;
+
+      const circle = document.getElementById('gaugeCircleFill');
+      const maxOffset = 440;
+      const targetOffset = maxOffset - (maxOffset * (overall / 100));
+      circle.style.strokeDashoffset = targetOffset;
+
+      // Color coding gauge
+      let tier = "Needs Refinement";
+      let tierColor = "var(--accent-rose)";
+      let strokeColor = "#f43f5e";
+
+      if (overall >= 85) {
+        tier = "Expert Master";
+        tierColor = "rgba(16, 185, 129, 0.2)";
+        strokeColor = "#10b981";
+      } else if (overall >= 70) {
+        tier = "Proficient";
+        tierColor = "rgba(99, 102, 241, 0.2)";
+        strokeColor = "#6366f1";
+      } else if (overall >= 50) {
+        tier = "Intermediate";
+        tierColor = "rgba(245, 158, 11, 0.2)";
+        strokeColor = "#f59e0b";
+      }
+
+      circle.style.stroke = strokeColor;
+      const tierBadge = document.getElementById('scoreTierBadge');
+      tierBadge.innerText = tier;
+      tierBadge.style.background = tierColor;
+      tierBadge.style.color = strokeColor;
+
+      // Cosine Sim display
+      document.getElementById('cosineSimilarityDisplay').innerText = cosine.toFixed(3);
+      const compDelta = Math.round(100 - overall);
+      document.getElementById('completenessDeltaDisplay').innerText = `-${compDelta}% Gap`;
+
+      // Sub-dimension bars
+      document.getElementById('dimStructureScore').innerText = `${struct}/100`;
+      document.getElementById('barStructure').style.width = `${struct}%`;
+
+      document.getElementById('dimClarityScore').innerText = `${clarity}/100`;
+      document.getElementById('barClarity').style.width = `${clarity}%`;
+
+      document.getElementById('dimContextScore').innerText = `${context}/100`;
+      document.getElementById('barContext').style.width = `${context}%`;
+
+      document.getElementById('dimCompletenessScore').innerText = `${comp}/100`;
+      document.getElementById('barCompleteness').style.width = `${comp}%`;
+    }
+
+    function renderGapAndSuggestions(student, scen, flags) {
+      const gapContainer = document.getElementById('gapItemsList');
+      const sugContainer = document.getElementById('suggestionItemsList');
+
+      let gapHtml = '';
+      let sugHtml = '';
+
+      // Check Persona
+      if (flags.hasRole) {
+        gapHtml += `
+          <div class="gap-item">
+            <div class="gap-status-icon status-matched">✓</div>
+            <div><strong>Role Persona Anchor:</strong> Explicitly assigns persona to condition model behavior.</div>
+          </div>`;
+      } else {
+        gapHtml += `
+          <div class="gap-item">
+            <div class="gap-status-icon status-missing">✗</div>
+            <div><strong>Missing Persona:</strong> Candidate prompt lacks an "Act as..." or domain persona anchor present in Golden Prompt.</div>
+          </div>`;
+        sugHtml += `
+          <div class="suggestion-item">
+            <div class="sug-header"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Frame with an Expert Persona</div>
+            <div class="sug-body">Begin your prompt with a specific identity (e.g. <em>"You are a Senior Staff Software Engineer..."</em>) to shift the model's token distribution toward expert terminology.</div>
+          </div>`;
+      }
+
+      // Check Output Schema
+      if (flags.hasFormat) {
+        gapHtml += `
+          <div class="gap-item">
+            <div class="gap-status-icon status-matched">✓</div>
+            <div><strong>Output Contract:</strong> Defined specific format schema (JSON / Markdown / Code blocks).</div>
+          </div>`;
+      } else {
+        gapHtml += `
+          <div class="gap-item">
+            <div class="gap-status-icon status-missing">✗</div>
+            <div><strong>Unstructured Output:</strong> Does not enforce schema constraints; high risk of conversational hallucinations.</div>
+          </div>`;
+        sugHtml += `
+          <div class="suggestion-item">
+            <div class="sug-header"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg> Enforce Strict Output Schemas</div>
+            <div class="sug-body">Demand structured artifacts (e.g. <em>"Return valid RFC 8259 JSON without conversational markdown wrapper"</em>) to guarantee deterministic parsing.</div>
+          </div>`;
+      }
+
+      // Check Negative Constraints
+      if (flags.hasGuardrails) {
+        gapHtml += `
+          <div class="gap-item">
+            <div class="gap-status-icon status-matched">✓</div>
+            <div><strong>Negative Guardrails:</strong> Contains explicit boundaries specifying what the model must avoid.</div>
+          </div>`;
+      } else {
+        gapHtml += `
+          <div class="gap-item">
+            <div class="gap-status-icon status-missing">✗</div>
+            <div><strong>Missing Negative Constraints:</strong> Golden prompt specifically restricts external libraries or unsolicited output.</div>
+          </div>`;
+        sugHtml += `
+          <div class="suggestion-item">
+            <div class="sug-header"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg> Implement Negative Constraints</div>
+            <div class="sug-body">Add boundaries: <em>"Do not use third-party libraries outside the standard library"</em> or <em>"Never reveal direct answers upfront"</em>.</div>
+          </div>`;
+      }
+
+      // Check Domain Context
+      if (flags.hasContext) {
+        gapHtml += `
+          <div class="gap-item">
+            <div class="gap-status-icon status-matched">✓</div>
+            <div><strong>Domain Grounding:</strong> Incorporates scenario-specific nomenclature and edge-case definitions.</div>
+          </div>`;
+      } else {
+        gapHtml += `
+          <div class="gap-item">
+            <div class="gap-status-icon status-partial">△</div>
+            <div><strong>Limited Contextual Depth:</strong> Lacks explicit edge case scenarios (e.g. null values, empty collections).</div>
+          </div>`;
+        sugHtml += `
+          <div class="suggestion-item">
+            <div class="sug-header"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg> Ground Edge Cases & Assumptions</div>
+            <div class="sug-body">Explicitly enumerate how unusual inputs should be handled rather than leaving them to model discretion.</div>
+          </div>`;
+      }
+
+      gapContainer.innerHTML = gapHtml;
+      sugContainer.innerHTML = sugHtml;
+    }
+
+    function applyOptimizedRewrite() {
+      const scen = scenarios[currentScenarioKey];
+      const input = document.getElementById('studentPromptInput');
+      input.value = scen.improvedPrompt;
+      updateCounts();
+      analyzeQuickLint();
+      evaluatePrompt();
+      showToast("Applied recommended enhancements! Re-assessing...");
+    }
+
+    /* =========================================================================
+       SANDBOX OUTPUT TABS
+       ========================================================================= */
+    function switchSandboxTab(tab) {
+      const studentTab = document.getElementById('tabStudentOutput');
+      const goldenTab = document.getElementById('tabGoldenOutput');
+      const outputText = document.getElementById('sandboxOutputText');
+
+      if (tab === 'student') {
+        studentTab.classList.add('active');
+        goldenTab.classList.remove('active');
+        outputText.innerText = currentEvaluation ? currentEvaluation.studentOutput : scenarios[currentScenarioKey].outputs.student;
+      } else {
+        studentTab.classList.remove('active');
+        goldenTab.classList.add('active');
+        outputText.innerText = currentEvaluation ? currentEvaluation.goldenOutput : scenarios[currentScenarioKey].outputs.golden;
+      }
+    }
+
+    /* =========================================================================
+       THEME & UTILITIES
+       ========================================================================= */
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeText = document.getElementById('themeText');
+
+    themeToggleBtn.addEventListener('click', () => {
+      const current = document.body.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.body.setAttribute('data-theme', next);
+      themeText.innerText = next === 'dark' ? 'Dark' : 'Light';
+    });
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      const msgEl = document.getElementById('toastMessage');
+      msgEl.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    function exportReportData() {
+      const scen = scenarios[currentScenarioKey];
+      const data = {
+        system: "PromptEval AI NLP Assessment Framework",
+        version: "3.2.0",
+        timestamp: new Date().toISOString(),
+        scenario: scen.title,
+        golden_prompt: scen.goldenPrompt,
+        student_prompt: document.getElementById('studentPromptInput').value,
+        rubric_breakdown: {
+          structure_weight: 0.25,
+          clarity_weight: 0.25,
+          context_weight: 0.25,
+          completeness_weight: 0.25
+        },
+        methodology: "Semantic Embeddings (Sentence-Transformers) + Heuristic AST Delimiter Grammar"
+      };
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `PromptEval_Report_${currentScenarioKey}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Downloaded benchmark report (.JSON)");
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
