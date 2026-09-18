@@ -40,21 +40,21 @@
     }
 
     .container {
-      max-width: 1040px;
+      max-width: 1000px;
       margin: 0 auto;
     }
 
     /* Header */
     header {
       text-align: center;
-      margin-bottom: 36px;
+      margin-bottom: 28px;
     }
 
     .logo {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 700;
       margin-bottom: 8px;
       color: var(--text);
@@ -72,54 +72,52 @@
 
     .subtitle {
       color: var(--text-muted);
-      font-size: 1rem;
-      max-width: 620px;
+      font-size: 0.95rem;
+      max-width: 600px;
       margin: 0 auto;
     }
 
-    /* Scenario Bar */
-    .task-selector-wrapper {
+    /* Challenge Notice (Single Option) */
+    .challenge-banner {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 16px 20px;
+      padding: 12px 18px;
+      margin-bottom: 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 24px;
       flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .task-label {
-      font-size: 0.9rem;
+    .challenge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
       font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .task-select {
-      background: var(--bg);
-      border: 1px solid var(--border);
       color: var(--text);
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-family: inherit;
-      outline: none;
-      cursor: pointer;
-      min-width: 260px;
     }
 
-    .task-select:focus {
-      border-color: var(--accent);
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .benchmark-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
     }
 
     /* Main Grid: Student Prompt vs Golden Reference */
     .prompt-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 24px;
+      gap: 18px;
+      margin-bottom: 20px;
     }
 
     @media (max-width: 768px) {
@@ -132,7 +130,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
     }
@@ -141,16 +139,16 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .panel-title {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 600;
     }
 
     .panel-tag {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       padding: 2px 8px;
       border-radius: 999px;
       font-weight: 600;
@@ -177,7 +175,7 @@
       padding: 12px;
       color: var(--text);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       line-height: 1.5;
       resize: vertical;
       outline: none;
@@ -196,14 +194,14 @@
       padding: 12px;
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       line-height: 1.5;
       overflow-y: auto;
       white-space: pre-wrap;
     }
 
     .char-count {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       color: var(--text-muted);
       margin-top: 8px;
       text-align: right;
@@ -226,7 +224,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .assess-btn:hover {
@@ -242,19 +240,9 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 24px;
+      padding: 22px;
       margin-bottom: 24px;
-      display: none;
-    }
-
-    .results-card.active {
       display: block;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     .results-top {
@@ -262,10 +250,10 @@
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border);
-      padding-bottom: 20px;
-      margin-bottom: 20px;
+      padding-bottom: 18px;
+      margin-bottom: 18px;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 14px;
     }
 
     .score-summary {
@@ -275,33 +263,33 @@
     }
 
     .score-circle {
-      width: 68px;
-      height: 68px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       background: rgba(99, 102, 241, 0.12);
       border: 2px solid var(--accent);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
+      font-size: 1.55rem;
       font-weight: 700;
       color: var(--text);
     }
 
     .score-text h3 {
-      font-size: 1.15rem;
-      margin-bottom: 4px;
+      font-size: 1.1rem;
+      margin-bottom: 2px;
     }
 
     .score-text p {
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.82rem;
     }
 
     .tier-badge {
       padding: 6px 14px;
       border-radius: 999px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
     }
 
@@ -310,7 +298,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     @media (max-width: 768px) {
@@ -322,23 +310,23 @@
     .pillar-card {
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px;
+      border-radius: 8px;
+      padding: 12px 14px;
     }
 
     .pillar-name {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       display: flex;
       justify-content: space-between;
       font-weight: 500;
     }
 
     .pillar-val {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .pillar-bar-bg {
@@ -356,11 +344,11 @@
       transition: width 0.5s ease;
     }
 
-    /* Gap & Suggestions Lists */
+    /* Feedback Columns */
     .feedback-columns {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 18px;
     }
 
     @media (max-width: 768px) {
@@ -370,9 +358,9 @@
     }
 
     .section-subtitle {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .list-item {
@@ -380,14 +368,14 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 12px 14px;
-      margin-bottom: 10px;
-      font-size: 0.86rem;
+      margin-bottom: 8px;
+      font-size: 0.84rem;
       line-height: 1.45;
     }
 
     .list-item strong {
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       color: var(--text);
     }
 
@@ -397,7 +385,7 @@
 
     .status-badge {
       display: inline-block;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 700;
       padding: 2px 6px;
       border-radius: 4px;
@@ -422,7 +410,7 @@
 
     /* Suggested Rewrite */
     .rewrite-box {
-      margin-top: 20px;
+      margin-top: 18px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -430,7 +418,7 @@
     }
 
     .rewrite-title {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
       color: #818cf8;
       margin-bottom: 6px;
@@ -447,11 +435,11 @@
     /* Footer */
     footer {
       text-align: center;
-      margin-top: 40px;
-      font-size: 0.82rem;
+      margin-top: 36px;
+      font-size: 0.8rem;
       color: var(--text-muted);
       border-top: 1px solid var(--border);
-      padding-top: 20px;
+      padding-top: 18px;
     }
 
     footer a {
@@ -470,30 +458,30 @@
         <span class="logo-badge">NLP</span>
       </div>
       <p class="subtitle">
-        Assess students' prompt engineering skills against expert golden prompts across Structure, Clarity, Context, and Completeness.
+        Assess your prompt engineering skills against expert golden benchmarks across Structure, Clarity, Context, and Completeness.
       </p>
     </header>
 
-    <!-- Task Selector -->
-    <div class="task-selector-wrapper">
-      <span class="task-label">Select Prompt Challenge:</span>
-      <select id="scenarioSelect" class="task-select" onchange="onScenarioChange()">
-        <option value="code">Python Code Refactoring & Optimization</option>
-        <option value="tutor">Socratic AI Math Tutor</option>
-        <option value="data">Structured JSON Entity Extraction</option>
-        <option value="creative">Executive C-Suite Briefing</option>
-      </select>
+    <!-- Single Unified Challenge Banner -->
+    <div class="challenge-banner">
+      <div class="challenge-tag">
+        <span class="badge-dot"></span>
+        <span>Standard Prompt Engineering Assessment</span>
+      </div>
+      <div class="benchmark-label">
+        Reference: Expert Golden Standard
+      </div>
     </div>
 
-    <!-- Side by Side Workspace -->
+    <!-- Side-by-Side Prompt Workspace -->
     <div class="prompt-grid">
-      <!-- Student Prompt -->
+      <!-- Student Prompt Input -->
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">Student Prompt</span>
-          <span class="panel-tag tag-student">Input</span>
+          <span class="panel-tag tag-student">Your Input</span>
         </div>
-        <textarea id="studentInput" class="prompt-input" placeholder="Type or paste student prompt here to assess..."></textarea>
+        <textarea id="studentInput" class="prompt-input" placeholder="Type or paste your prompt here to evaluate..."></textarea>
         <div class="char-count"><span id="charCount">0</span> characters</div>
       </div>
 
@@ -504,7 +492,7 @@
           <span class="panel-tag tag-golden">Benchmark</span>
         </div>
         <div id="goldenDisplay" class="golden-box"></div>
-        <div class="char-count">Complete Expert Benchmark</div>
+        <div class="char-count">Standard of Excellence</div>
       </div>
     </div>
 
@@ -524,7 +512,7 @@
           <div class="score-circle" id="overallScoreDisplay">--</div>
           <div class="score-text">
             <h3>Prompt Quality Score</h3>
-            <p>Evaluated using semantic similarity and rubric heuristics</p>
+            <p>Measured using semantic similarity and rubric gap analysis</p>
           </div>
         </div>
         <div class="tier-badge" id="tierBadge">Proficient</div>
@@ -606,122 +594,37 @@
   </div>
 
   <script>
-    const scenarios = {
-      code: {
-        title: "Python Code Refactoring",
-        goldenPrompt: `You are a Senior Staff Python Engineer and Code Reviewer.
-Your task is to refactor the provided Python code snippet to optimize runtime complexity, enforce PEP 8 style standards, and enhance readability.
+    // Single Unified Standard Prompt Benchmark
+    const standardScenario = {
+      title: "Standard Prompt Engineering Assessment",
+      goldenPrompt: `You are a Senior Staff Software Engineer and AI Assistant.
+Your task is to refactor and optimize the provided code snippet to improve runtime complexity, adhere to clean coding conventions, and ensure high readability.
 
 Context & Rules:
-- The target environment is Python 3.12+.
-- The refactored solution must be accompanied by comprehensive docstrings in Google format with type annotations.
-- Include an asymptotic analysis (Big-O time and space complexity) comparing the original vs. refactored implementation.
+- Include comprehensive docstrings with parameter types and return value annotations.
+- Provide an asymptotic analysis (Big-O time and space complexity) comparing the original vs. optimized implementation.
 
 Constraints:
-- Do not introduce external dependencies outside the Python Standard Library.
-- If edge cases (e.g. empty lists, null inputs, negative integers) exist, handle them with clear exceptions.
-- Output Format: Provide your response in valid Markdown using code blocks for the refactored code followed by bulleted explanations.`,
-        defaultPrompt: "Act as a Python engineer. Refactor this code for better performance, add type annotations and Google docstrings. Explain the Big-O complexity difference.",
-        rewrite: `You are a Senior Staff Python Engineer.
-Refactor the provided Python code to optimize runtime complexity to O(n) and conform to PEP 8 standards.
+- Do not introduce unnecessary external dependencies.
+- Handle edge cases (e.g. empty inputs, null values, out-of-bound arguments) gracefully with clear exceptions.
+- Output Format: Provide your response in clean Markdown with code blocks followed by concise bullet points.`,
+
+      defaultStudentPrompt: "Act as a software engineer. Refactor this code for better performance, add type annotations and docstrings. Explain the Big-O complexity difference.",
+
+      suggestedRewrite: `You are a Senior Staff Software Engineer.
+Refactor the provided code to optimize runtime complexity and enforce clean architectural standards.
 
 Requirements:
-- Add comprehensive type hints and Google-style docstrings.
+- Add comprehensive type hints and docstrings.
 - Handle edge cases including empty inputs and invalid types.
 - Provide a Big-O complexity comparison.
 - Format the response in structured Markdown.`
-      },
-
-      tutor: {
-        title: "Socratic AI Math Tutor",
-        goldenPrompt: `You are a patient, encouraging Socratic Math Tutor specializing in high school calculus.
-Your goal is to guide the student toward discovering the concept of derivatives and instantaneous rate of change on their own.
-
-Pedagogical Rules:
-- Never provide direct answers or final equations upfront.
-- Ask targeted, thought-provoking guiding questions one step at a time.
-- Connect mathematical concepts to real-world physical intuition (such as speedometer readings in an accelerating car).
-- If the student makes a misconception, validate their effort, gently highlight the discrepancy, and ask a scaffolding question.
-
-Output Style:
-- Friendly, warm, and conversational.
-- Limit each response to 2-3 sentences followed by exactly ONE reflective question.`,
-        defaultPrompt: "You are a calculus tutor. Teach me what a derivative is step by step using simple analogies, without giving the final formulas right away.",
-        rewrite: `You are a Socratic high school calculus tutor.
-Guide the student to intuitively discover derivatives and instantaneous rate of change.
-
-Rules:
-- Never reveal formulas directly; use physical intuition like an accelerating car speedometer.
-- Guide step-by-step with 1 targeted question per turn.
-- Be encouraging, concise, and friendly.`
-      },
-
-      data: {
-        title: "JSON Data Extraction",
-        goldenPrompt: `You are a specialized Data Extraction Engine.
-Analyze the unformatted customer inquiry text and extract key entities into a strictly formatted JSON object.
-
-Target Schema:
-{
-  "customer_id": string or null,
-  "sentiment": "positive" | "neutral" | "negative",
-  "urgency": "low" | "medium" | "high",
-  "product_mentions": string[],
-  "core_issue": string,
-  "action_required": boolean
-}
-
-Constraints:
-- Output ONLY valid, parsable RFC 8259 JSON.
-- Do not wrap the JSON in commentary, introductory remarks, or conversational filler.
-- If an entity is missing or ambiguous, populate with null rather than guessing.`,
-        defaultPrompt: "Extract the customer information, sentiment, and core issue from this text into valid JSON format.",
-        rewrite: `You are an automated Data Extraction Engine.
-Extract customer ticket entities into a strict RFC 8259 JSON object matching this schema:
-{ customer_id, sentiment, urgency, product_mentions: [], core_issue, action_required: boolean }
-
-Constraints:
-- Output ONLY raw valid JSON without conversational wrapper text.
-- Fill missing fields with null.`
-      },
-
-      creative: {
-        title: "Executive Briefing Synthesis",
-        goldenPrompt: `You are a Chief Strategy Officer and Executive Communications Director.
-Your task is to synthesize the provided 20-page quarterly performance report into a concise 1-page C-suite Executive Briefing.
-
-Structure Requirements:
-1. Executive Summary (Max 3 bullet points highlighting top strategic milestones).
-2. Key Quantitative KPI Delta (Revenue, Net Retention, CAC, Runway in a formatted Markdown table).
-3. Critical Operational Risks & Headwinds.
-4. Strategic Decisions Required from the Board.
-
-Tone & Format:
-- Direct, data-grounded, objective, and executive-ready.
-- Use bolding for figures and percentage deltas.
-- Total response length must not exceed 450 words.`,
-        defaultPrompt: "Summarize this quarterly business report for executives. Include key metrics, risks, and keep it brief.",
-        rewrite: `You are a Chief Strategy Officer.
-Transform the report into a high-impact C-Suite Executive Briefing.
-
-Sections:
-1. Top 3 Strategic Milestones
-2. KPI Matrix (ARR, Gross Margin, CAC Payback in Markdown table)
-3. Critical Headwinds & Decisions Required
-
-Tone & Style:
-- Data-grounded, bold numbers, max 400 words.`
-      }
     };
 
-    function onScenarioChange() {
-      const select = document.getElementById('scenarioSelect');
-      const key = select.value;
-      const scen = scenarios[key];
-
-      document.getElementById('goldenDisplay').innerText = scen.goldenPrompt;
-      document.getElementById('studentInput').value = scen.defaultPrompt;
-      document.getElementById('rewriteContent').innerText = scen.rewrite;
+    function init() {
+      document.getElementById('goldenDisplay').innerText = standardScenario.goldenPrompt;
+      document.getElementById('studentInput').value = standardScenario.defaultStudentPrompt;
+      document.getElementById('rewriteContent').innerText = standardScenario.suggestedRewrite;
       updateCharCount();
       runAssessment(false);
     }
@@ -734,9 +637,6 @@ Tone & Style:
     document.getElementById('studentInput').addEventListener('input', updateCharCount);
 
     async function runAssessment(scroll = true) {
-      const select = document.getElementById('scenarioSelect');
-      const key = select.value;
-      const scen = scenarios[key];
       const studentText = document.getElementById('studentInput').value.trim();
 
       if (!studentText) {
@@ -745,18 +645,17 @@ Tone & Style:
       }
 
       const resultsCard = document.getElementById('resultsCard');
-      resultsCard.classList.add('active');
+      resultsCard.style.display = 'block';
 
-      // Attempt live backend call if app.py is running
       let backendSuccess = false;
       try {
         const response = await fetch('/api/assess', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            scenario: key,
+            scenario: 'code',
             student_prompt: studentText,
-            golden_prompt: scen.goldenPrompt
+            golden_prompt: standardScenario.goldenPrompt
           })
         });
 
@@ -772,8 +671,7 @@ Tone & Style:
       }
 
       if (!backendSuccess) {
-        // Fallback to client-side evaluation
-        renderResults(evaluateClientSide(studentText, scen.goldenPrompt, key));
+        renderResults(evaluateClientSide(studentText, standardScenario.goldenPrompt));
       }
 
       if (scroll) {
@@ -797,7 +695,7 @@ Tone & Style:
         tierBadge.style.color = '#fbbf24';
       }
 
-      // Pillars
+      // 4 Pillars
       const dims = res.dimensions;
       setBar('Structure', dims.structure.score);
       setBar('Clarity', dims.clarity.score);
@@ -836,9 +734,9 @@ Tone & Style:
       document.getElementById(`bar${name}`).style.width = `${score}%`;
     }
 
-    function evaluateClientSide(student, golden, key) {
+    function evaluateClientSide(student, golden) {
       let struct = 30;
-      if (/(act as|you are|role|specializing|expert|engineer|tutor)/i.test(student)) struct += 40;
+      if (/(act as|you are|role|specializing|expert|engineer|assistant)/i.test(student)) struct += 40;
       if (/(task is|markdown|format|steps|first|then)/i.test(student)) struct += 30;
       struct = Math.min(struct, 100);
 
@@ -848,14 +746,11 @@ Tone & Style:
       clarity = Math.min(clarity, 100);
 
       let context = 30;
-      if (key === 'code' && /(python|pep 8|complexity|type hints|docstring)/i.test(student)) context += 60;
-      if (key === 'tutor' && /(calculus|socratic|math|speedometer|analogy)/i.test(student)) context += 60;
-      if (key === 'data' && /(json|customer|sentiment|entity)/i.test(student)) context += 60;
-      if (key === 'creative' && /(executive|kpi|milestones|c-suite)/i.test(student)) context += 60;
+      if (/(complexity|type|docstring|edge case|performance)/i.test(student)) context += 60;
       context = Math.min(context, 100);
 
       let comp = 25;
-      if (/(format|json|markdown|table|schema)/i.test(student)) comp += 40;
+      if (/(format|markdown|code block|structured)/i.test(student)) comp += 40;
       if (/(do not|never|only|without|strictly)/i.test(student)) comp += 35;
       comp = Math.min(comp, 100);
 
@@ -867,7 +762,7 @@ Tone & Style:
 
       const gaps = [];
       if (struct >= 60) {
-        gaps.append ? null : gaps.push({ status: "matched", title: "Role Conditioning", description: "Assigned clear persona to condition the model." });
+        gaps.push({ status: "matched", title: "Role Conditioning", description: "Assigned clear persona to condition the model." });
       } else {
         gaps.push({ status: "missing", title: "Missing Persona", description: "No explicit role assigned (e.g. 'Act as a Senior Engineer')." });
       }
@@ -898,10 +793,8 @@ Tone & Style:
       };
     }
 
-    // Initialize on load
-    window.addEventListener('DOMContentLoaded', () => {
-      onScenarioChange();
-    });
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>
