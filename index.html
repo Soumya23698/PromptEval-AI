@@ -417,11 +417,64 @@
       padding: 14px;
     }
 
+    .rewrite-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .rewrite-title {
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       font-weight: 600;
       color: #818cf8;
-      margin-bottom: 6px;
+    }
+
+    .rewrite-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rewrite-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn-copy {
+      background: var(--surface);
+      border-color: var(--border);
+      color: var(--text-muted);
+    }
+
+    .btn-copy:hover {
+      background: var(--surface-hover);
+      color: var(--text);
+    }
+
+    .btn-apply {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-apply:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-apply:active {
+      transform: translateY(0);
     }
 
     .rewrite-content {
@@ -582,7 +635,24 @@
 
       <!-- Recommended Rewrite -->
       <div class="rewrite-box">
-        <div class="rewrite-title">Suggested Expert Rewrite</div>
+        <div class="rewrite-header">
+          <div class="rewrite-title">Suggested Expert Rewrite</div>
+          <div class="rewrite-actions">
+            <button class="rewrite-btn btn-copy" id="copyBtn" onclick="copyRewrite()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span id="copyBtnText">Copy</span>
+            </button>
+            <button class="rewrite-btn btn-apply" id="applyBtn" onclick="applyRewrite()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span>Apply to Student Prompt</span>
+            </button>
+          </div>
+        </div>
         <div class="rewrite-content" id="rewriteContent"></div>
       </div>
     </div>
@@ -726,6 +796,14 @@ Requirements:
           </div>`;
       });
       sugBox.innerHTML = sugHtml;
+
+      // Update Suggested Expert Rewrite
+      const rewriteBox = document.getElementById('rewriteContent');
+      if (res.improved_prompt) {
+        rewriteBox.innerText = res.improved_prompt;
+      } else {
+        rewriteBox.innerText = generateSmartRewrite(document.getElementById('studentInput').value);
+      }
     }
 
     function setBar(name, score) {
@@ -791,6 +869,65 @@ Requirements:
         gap_analysis: gaps,
         suggestions: suggestions
       };
+    }
+
+    function generateSmartRewrite(text) {
+      if (!text || text.trim().length < 5) {
+        return standardScenario.suggestedRewrite;
+      }
+      const hasPersona = /(act as|you are|role|expert|engineer|assistant)/i.test(text);
+      const hasFormat = /(format|markdown|json|table|code block|requirements)/i.test(text);
+      const hasConstraint = /(do not|never|only|without|strictly)/i.test(text);
+
+      let parts = [];
+      if (!hasPersona) {
+        parts.push("You are a Senior Staff Software Engineer and AI Technical Reviewer.");
+      }
+      parts.push(text.trim());
+      if (!hasFormat) {
+        parts.push("\nRequirements:\n- Provide production-ready implementation with type annotations and docstrings.\n- Include asymptotic Big-O runtime and space complexity analysis.");
+      }
+      if (!hasConstraint) {
+        parts.push("- Do not introduce third-party libraries outside the standard library.\n- Handle edge cases (empty or invalid inputs) gracefully with clear exceptions.\n- Output response in structured Markdown.");
+      }
+      return parts.join("\n");
+    }
+
+    function copyRewrite() {
+      const text = document.getElementById('rewriteContent').innerText;
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => {
+        const btnText = document.getElementById('copyBtnText');
+        const oldText = btnText.innerText;
+        btnText.innerText = 'Copied! ✓';
+        setTimeout(() => {
+          btnText.innerText = oldText;
+        }, 2000);
+      });
+    }
+
+    function applyRewrite() {
+      const rewriteText = document.getElementById('rewriteContent').innerText.trim();
+      if (!rewriteText) return;
+
+      const input = document.getElementById('studentInput');
+      input.value = rewriteText;
+      updateCharCount();
+
+      // Smooth scroll to the student input
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      input.focus();
+
+      // Visual pulse effect
+      input.style.borderColor = 'var(--success)';
+      input.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.25)';
+      setTimeout(() => {
+        input.style.borderColor = 'var(--border)';
+        input.style.boxShadow = 'none';
+      }, 1400);
+
+      // Re-run assessment immediately so score updates in real time!
+      runAssessment(false);
     }
 
     // Initialize on page load
