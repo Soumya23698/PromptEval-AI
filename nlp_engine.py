@@ -332,10 +332,10 @@ class PromptEvaluator:
             ]
 
         prompt_parts = [
-            persona + "\n",
-            f"Objective:\n{task_prefix}\n\"{cleaned_body}\"\n",
-            "Context & Standards:\n" + "\n".join(context_rules) + "\n",
-            "Guardrails & Constraints:\n" + "\n".join(constraints)
+            f"### System Persona & Competency\n{persona}\n",
+            f"### Core Directive & Objective\n{task_prefix}\n\"{cleaned_body}\"\n",
+            "### Context & Execution Standards\n" + "\n".join(context_rules) + "\n",
+            "### Defensive Guardrails (Zero-Hallucination & Scope Control)\n" + "\n".join(constraints)
         ]
         return "\n".join(prompt_parts)
 
@@ -376,7 +376,10 @@ class PromptEvaluator:
         context_score, context_details = self._score_context(student_text, reference_golden, scenario_key)
         completeness_score, comp_details = self._score_completeness(student_text, reference_golden)
 
-        # 4. Overall Composite Quality Score
+        # 4. LLM Effectiveness Analysis (Instruction following, hallucination risk, determinism)
+        llm_metrics = self._score_llm_effectiveness(student_text, struct_details, clarity_details, comp_details)
+
+        # 5. Overall Composite Quality Score
         # 40% weight on dense semantic embeddings + 15% on each of the 4 structural rubrics
         rubric_avg = (structure_score + clarity_score + context_score + completeness_score) / 4.0
         overall_score = round((cosine_sim * 100 * 0.40) + (rubric_avg * 0.60))
@@ -396,7 +399,7 @@ class PromptEvaluator:
             tier = "Needs Refinement"
             tier_color = "#f43f5e"
 
-        # 5. Gap Analysis & Prescriptive Remediation Generation
+        # 6. Gap Analysis & Prescriptive Remediation Generation
         gap_analysis = self._generate_gap_analysis(struct_details, clarity_details, context_details, comp_details)
         suggestions = self._generate_suggestions(struct_details, clarity_details, context_details, comp_details)
 
@@ -405,6 +408,8 @@ class PromptEvaluator:
 
         return {
             "overall_score": overall_score,
+            "llm_effectiveness_score": llm_metrics["score"],
+            "llm_metrics": llm_metrics,
             "performance_tier": tier,
             "tier_color": tier_color,
             "semantic_similarity": round(cosine_sim, 4),
@@ -440,6 +445,58 @@ class PromptEvaluator:
                 "student": scenario.get("outputs", {}).get("student", ""),
                 "golden": scenario.get("outputs", {}).get("golden", "")
             }
+        }
+
+    def _score_llm_effectiveness(self, student: str, struct: Dict, clarity: Dict, comp: Dict) -> Dict[str, Any]:
+        """
+        Evaluates how reliably frontier LLMs (GPT-4o, Claude 3.5 Sonnet, Gemini 1.5 Pro)
+        can execute the prompt without hallucinations, ambiguity, or formatting drift.
+        """
+        score = 30.0
+
+        if clarity.get("has_imperatives", False):
+            score += 20.0
+        if not clarity.get("has_vagueness", False):
+            score += 10.0
+        else:
+            score -= 10.0
+
+        if comp.get("has_format", False):
+            score += 25.0
+            determinism = "Strict Machine Schema"
+        else:
+            determinism = "Unconstrained / Prose"
+
+        if comp.get("has_negative_constraints", False):
+            score += 25.0
+            hallucination_risk = "Low Risk (Bounded)"
+        else:
+            hallucination_risk = "High Risk (Unconstrained)"
+
+        if struct.get("has_persona", False):
+            score += 10.0
+
+        has_steps = struct.get("has_steps", False) or bool(re.search(r"\b(step by step|reasoning|chain of thought|first|then|analyze)\b", student, re.IGNORECASE))
+        if has_steps:
+            score += 10.0
+            reasoning_scaffold = "Stepwise Chain-of-Thought"
+        else:
+            reasoning_scaffold = "Zero-Shot Direct"
+
+        final_score = int(max(15, min(100, round(score))))
+        if final_score >= 85:
+            readiness = "Production Ready for Frontier LLMs"
+        elif final_score >= 65:
+            readiness = "Adequate (Add Guardrails for Zero Drift)"
+        else:
+            readiness = "Ambiguous (High Hallucination Risk)"
+
+        return {
+            "score": final_score,
+            "readiness": readiness,
+            "hallucination_risk": hallucination_risk,
+            "formatting_determinism": determinism,
+            "reasoning_scaffold": reasoning_scaffold
         }
 
     def _score_structure(self, student: str, golden: str) -> tuple[float, Dict[str, bool]]:

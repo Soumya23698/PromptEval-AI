@@ -83,6 +83,8 @@ def assess_prompt():
         return jsonify({
             "status": "success",
             "source": "pytorch_sentence_transformer",
+            "backend": "PyTorch NLP Engine",
+            "model": "sentence-transformers/all-MiniLM-L6-v2",
             "results": results
         })
     except Exception as e:
