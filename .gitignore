@@ -16,5 +16,6 @@ cloudflared.exe
 # IDE & system files
 .vscode/
 .idea/
-*.swp
-.DS_Store
+# Environment secrets
+.env
+*.env

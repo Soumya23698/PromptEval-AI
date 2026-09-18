@@ -77,12 +77,41 @@ def assess_prompt():
         results = evaluator.evaluate(
             student_prompt=student_prompt,
             golden_prompt=golden_prompt,
-            scenario_key=scenario_key
+            scenario_key=scenario_key,
+            dynamic_golden=True
         )
         return jsonify({
             "status": "success",
             "source": "pytorch_sentence_transformer",
             "results": results
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
+
+@app.route("/api/generate_golden_prompt", methods=["POST"])
+def generate_golden_prompt():
+    """
+    Synthesize an Expert-Designed Golden Prompt tailored directly to a candidate input prompt.
+    """
+    data = request.get_json(force=True, silent=True) or {}
+    student_prompt = data.get("student_prompt", "").strip()
+    scenario_key = data.get("scenario", "code")
+
+    if not student_prompt:
+        return jsonify({
+            "status": "error",
+            "message": "student_prompt parameter is required."
+        }), 400
+
+    try:
+        expert_golden = evaluator.generate_expert_golden_prompt(student_prompt, scenario_key)
+        return jsonify({
+            "status": "success",
+            "expert_golden_prompt": expert_golden
         })
     except Exception as e:
         return jsonify({

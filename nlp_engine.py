@@ -240,16 +240,123 @@ class PromptEvaluator:
     def __init__(self):
         self.model = get_embedding_model()
 
-    def evaluate(self, student_prompt: str, golden_prompt: str, scenario_key: str = "code") -> Dict[str, Any]:
-        student_text = (student_prompt or "").strip()
-        golden_text = (golden_prompt or "").strip()
+    def generate_expert_golden_prompt(self, student_text: str, scenario_key: str = "code") -> str:
+        """
+        Generates an expert-designed, production-grade golden prompt dynamically
+        tailored directly to the student's candidate input prompt.
+        Transforms raw, unconstrained student prompts into precision-engineered benchmarks
+        with defined persona, clear task, domain context, negative constraints, and output contract.
+        """
+        clean_text = student_text.strip()
+        if not clean_text:
+            scenario = BENCHMARK_SCENARIOS.get(scenario_key, BENCHMARK_SCENARIOS["code"])
+            return scenario["golden_prompt"]
 
+        # Clean conversational openers
+        cleaned_body = re.sub(
+            r"^(please|can you|could you|i want you to|help me to|i need you to|write a prompt to|act as a\s+[\w\s]+and|you are a\s+[\w\s]+,\s*)\s*",
+            "",
+            clean_text,
+            flags=re.IGNORECASE
+        ).strip()
+        if not cleaned_body:
+            cleaned_body = clean_text
+
+        lower = clean_text.lower()
+        
+        # Domain detection heuristics
+        if any(w in lower for w in ["python", "code", "refactor", "algorithm", "function", "javascript", "sql", "bug", "developer", "program", "api", "backend", "frontend", "rust", "c++", "java", "css", "html", "debug"]):
+            persona = "You are a Senior Staff Software Engineer and Technical Systems Architect."
+            task_prefix = "Refactor, optimize, and engineer a robust production-grade solution for the following directive:"
+            context_rules = [
+                "- Implement clean, idiomatic design adhering to industry standards (PEP 8 for Python, standard style conventions).",
+                "- Enforce strict type hints, modular separation of concerns, and clear semantic naming.",
+                "- Include comprehensive docstrings and asymptotic Big-O runtime and space complexity analysis."
+            ]
+            constraints = [
+                "- Do not introduce external third-party dependencies outside the standard runtime library.",
+                "- Handle edge cases gracefully (empty collections, invalid types, boundary exceptions) with explicit error handling.",
+                "- Output Format: Deliver the final solution in structured Markdown with syntax-highlighted code blocks followed by concise bulleted explanations."
+            ]
+        elif any(w in lower for w in ["data", "json", "extract", "parse", "schema", "csv", "database", "query", "regex", "table", "pipeline", "analytics"]):
+            persona = "You are a Principal Data Engineer and Structured Data Extraction Specialist."
+            task_prefix = "Process the input information and perform precise schema extraction and transformation:"
+            context_rules = [
+                "- Strictly validate all extracted fields against a deterministic data schema with field types.",
+                "- Normalize raw, heterogeneous inputs into standardized, machine-parsable representations.",
+                "- Document null-handling heuristics and data sanitization protocols."
+            ]
+            constraints = [
+                "- Output ONLY strictly valid RFC 8259 JSON or tabular data without conversational filler or introductory chatter.",
+                "- Never interpolate or hallucinate missing entities; explicitly tag unconfirmed fields as null.",
+                "- Include deterministic validation error handling for corrupt or malformed inputs."
+            ]
+        elif any(w in lower for w in ["teach", "tutor", "explain", "student", "math", "calculus", "physics", "science", "learn", "socratic", "why", "concept", "pedagog"]):
+            persona = "You are an expert Socratic Educator and Pedagogical Learning Specialist."
+            task_prefix = "Guide the student toward deep, intuitive conceptual mastery of the following topic:"
+            context_rules = [
+                "- Employ progressive scaffolding: anchor abstract principles with relatable real-world physical intuition.",
+                "- Break down complex multi-tier problems into guided intermediate reasoning checkpoints.",
+                "- Formulate targeted reflection questions that prompt active student discovery."
+            ]
+            constraints = [
+                "- Never provide final answers or formulas immediately upfront; guide the learner's discovery process step-by-step.",
+                "- If a misconception arises, validate the student's effort, pinpoint the logical discrepancy gently, and re-frame.",
+                "- Limit each response to 2-3 focused insights followed by exactly ONE reflective guiding question."
+            ]
+        elif any(w in lower for w in ["business", "executive", "kpi", "strategy", "finance", "board", "marketing", "pitch", "sales", "revenue", "roi", "c-suite", "report"]):
+            persona = "You are an Executive Business Strategist and C-Suite Management Consultant."
+            task_prefix = "Formulate a high-impact, data-driven executive briefing for the following requirement:"
+            context_rules = [
+                "- Ground strategic recommendations in verifiable quantitative metrics (ROI, CAC/LTV, EBITDA margins, payback velocity).",
+                "- Structure insights into high-level strategic takeaways, core performance indicators, and risk mitigation protocols.",
+                "- Tailor communication style specifically for board-level decision-makers and senior leadership."
+            ]
+            constraints = [
+                "- Avoid speculative assertions; clearly separate assumptions from verified empirical benchmarks.",
+                "- Enforce executive brevity: deliver dense, actionable bullet points and Markdown tables without corporate fluff.",
+                "- Conclude with clear decision gates and measurable next-step action items."
+            ]
+        else:
+            persona = "You are an Elite AI Systems Specialist and Expert Prompt Architect."
+            task_prefix = "Execute the following objective with maximum precision, rigor, and depth:"
+            context_rules = [
+                "- Establish clear domain assumptions, terminology, and background context before detailing the resolution.",
+                "- Follow a logical, step-by-step execution hierarchy to ensure high-fidelity deliverables.",
+                "- Provide comprehensive coverage of core requirements with concrete examples."
+            ]
+            constraints = [
+                "- Avoid conversational preamble or vague speculation; address the directive with direct technical precision.",
+                "- Formulate explicit negative constraints to safeguard against ambiguity or hallucinations.",
+                "- Output Format: Deliver the response in structured Markdown with distinct section headings and bulleted action points."
+            ]
+
+        prompt_parts = [
+            persona + "\n",
+            f"Objective:\n{task_prefix}\n\"{cleaned_body}\"\n",
+            "Context & Standards:\n" + "\n".join(context_rules) + "\n",
+            "Guardrails & Constraints:\n" + "\n".join(constraints)
+        ]
+        return "\n".join(prompt_parts)
+
+    def evaluate(self, student_prompt: str, golden_prompt: str = "", scenario_key: str = "code", dynamic_golden: bool = True) -> Dict[str, Any]:
+        student_text = (student_prompt or "").strip()
         if not student_text:
             raise ValueError("Student prompt cannot be empty.")
 
+        # Always synthesize an expert golden prompt tailored directly to the student input
+        dynamic_golden_prompt = self.generate_expert_golden_prompt(student_text, scenario_key)
+
+        golden_text = (golden_prompt or "").strip()
+        if not golden_text or dynamic_golden:
+            # Benchmark against the dynamic expert golden prompt tailored to this input
+            reference_golden = dynamic_golden_prompt
+        else:
+            reference_golden = golden_text
+
         # 1. Dense Semantic Similarity using Sentence-Transformers
         student_emb = self.model.encode([student_text])[0]
-        golden_emb = self.model.encode([golden_text])[0]
+        golden_emb = self.model.encode([reference_golden])[0]
         
         cosine_sim = float(cosine_similarity([student_emb], [golden_emb])[0][0])
         # Bound cosine similarity nicely
@@ -258,16 +365,16 @@ class PromptEvaluator:
         # 2. N-Gram & Vocabulary Jaccard / Overlap
         tfidf = TfidfVectorizer(ngram_range=(1, 2), stop_words="english")
         try:
-            tfidf_mat = tfidf.fit_transform([student_text, golden_text])
+            tfidf_mat = tfidf.fit_transform([student_text, reference_golden])
             tfidf_sim = float(cosine_similarity(tfidf_mat[0:1], tfidf_mat[1:2])[0][0])
         except Exception:
             tfidf_sim = 0.0
 
         # 3. Sub-dimension NLP scoring
-        structure_score, struct_details = self._score_structure(student_text, golden_text)
-        clarity_score, clarity_details = self._score_clarity(student_text, golden_text)
-        context_score, context_details = self._score_context(student_text, golden_text, scenario_key)
-        completeness_score, comp_details = self._score_completeness(student_text, golden_text)
+        structure_score, struct_details = self._score_structure(student_text, reference_golden)
+        clarity_score, clarity_details = self._score_clarity(student_text, reference_golden)
+        context_score, context_details = self._score_context(student_text, reference_golden, scenario_key)
+        completeness_score, comp_details = self._score_completeness(student_text, reference_golden)
 
         # 4. Overall Composite Quality Score
         # 40% weight on dense semantic embeddings + 15% on each of the 4 structural rubrics
@@ -327,7 +434,8 @@ class PromptEvaluator:
             },
             "gap_analysis": gap_analysis,
             "suggestions": suggestions,
-            "improved_prompt": scenario.get("improved_prompt", ""),
+            "expert_golden_prompt": dynamic_golden_prompt,
+            "improved_prompt": dynamic_golden_prompt,
             "outputs": {
                 "student": scenario.get("outputs", {}).get("student", ""),
                 "golden": scenario.get("outputs", {}).get("golden", "")
