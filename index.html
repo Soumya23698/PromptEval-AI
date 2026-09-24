@@ -10,24 +10,28 @@
 
   <style>
     :root {
-      --bg: #0b0f17;
-      --surface: #111622;
-      --surface-elevated: #161c2b;
-      --surface-hover: #1c2438;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-focus: rgba(99, 102, 241, 0.6);
-      --text: #f1f5f9;
-      --text-muted: #8e9bb0;
-      --text-subtle: #5f6b80;
+      --bg: #f8f9fc;
+      --surface: #ffffff;
+      --surface-elevated: #f1f4f9;
+      --surface-hover: #e8edf5;
+      --border: #e2e8f0;
+      --border-focus: #6366f1;
+      --text: #1e2535;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
       --accent: #6366f1;
       --accent-hover: #4f46e5;
-      --accent-glow: rgba(99, 102, 241, 0.18);
-      --emerald: #10b981;
-      --emerald-glow: rgba(16, 185, 129, 0.18);
-      --amber: #f59e0b;
-      --rose: #f43f5e;
+      --accent-glow: rgba(99, 102, 241, 0.10);
+      --emerald: #059669;
+      --emerald-bg: #ecfdf5;
+      --emerald-border: #a7f3d0;
+      --amber: #d97706;
+      --rose: #e11d48;
       --radius: 12px;
       --radius-sm: 8px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+      --shadow-lg: 0 10px 30px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.04);
     }
 
     * {
@@ -38,10 +42,6 @@
 
     body {
       background-color: var(--bg);
-      background-image: 
-        radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.1) 0%, transparent 55%),
-        radial-gradient(circle at 85% 10%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
-      background-attachment: fixed;
       color: var(--text);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       line-height: 1.5;
@@ -106,10 +106,11 @@
       gap: 8px;
       padding: 6px 14px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--surface);
       border: 1px solid var(--border);
       font-size: 0.78rem;
       color: var(--text-muted);
+      box-shadow: var(--shadow-sm);
     }
 
     .pulse-dot {
@@ -117,7 +118,7 @@
       height: 7px;
       border-radius: 50%;
       background: var(--emerald);
-      box-shadow: 0 0 8px var(--emerald);
+      box-shadow: 0 0 6px rgba(5, 150, 105, 0.4);
       animation: pulse 2s infinite ease-in-out;
     }
 
@@ -133,12 +134,12 @@
 
     /* Dedicated Golden Prompt Portion in Results */
     .golden-portion {
-      background: var(--surface-elevated);
-      border: 1px solid rgba(16, 185, 129, 0.25);
+      background: var(--emerald-bg);
+      border: 1px solid var(--emerald-border);
       border-radius: var(--radius);
       padding: 20px;
       margin-bottom: 24px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      box-shadow: var(--shadow-sm);
     }
 
     .panel {
@@ -150,10 +151,12 @@
       flex-direction: column;
       position: relative;
       transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: var(--shadow-sm);
     }
 
     .panel:hover {
-      border-color: rgba(255, 255, 255, 0.12);
+      border-color: #c7d2e8;
+      box-shadow: var(--shadow);
     }
 
     .panel-header {
@@ -183,21 +186,21 @@
     }
 
     .tag-student {
-      background: rgba(99, 102, 241, 0.12);
-      color: #a5b4fc;
-      border: 1px solid rgba(99, 102, 241, 0.25);
+      background: rgba(99, 102, 241, 0.08);
+      color: #4f46e5;
+      border: 1px solid rgba(99, 102, 241, 0.20);
     }
 
     .tag-golden {
-      background: rgba(16, 185, 129, 0.12);
-      color: #6ee7b7;
-      border: 1px solid rgba(16, 185, 129, 0.25);
+      background: rgba(5, 150, 105, 0.08);
+      color: #059669;
+      border: 1px solid rgba(5, 150, 105, 0.20);
     }
 
-    /* Segmented Tab Switcher for Single Unified Prompt Portion */
+    /* Segmented Tab Switcher */
     .prompt-tabs {
       display: inline-flex;
-      background: rgba(255, 255, 255, 0.04);
+      background: var(--surface-elevated);
       padding: 3px;
       border-radius: 8px;
       border: 1px solid var(--border);
@@ -225,30 +228,30 @@
     }
 
     .tab-btn.active {
-      background: var(--surface-elevated);
+      background: var(--surface);
       color: var(--text);
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
     }
 
     .tab-badge {
       font-size: 0.65rem;
       padding: 1px 6px;
       border-radius: 999px;
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
+      background: rgba(5, 150, 105, 0.10);
+      color: #059669;
       font-weight: 600;
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      border: 1px solid rgba(5, 150, 105, 0.20);
     }
 
-    /* Quick Chips for One-Click Testing */
+    /* Quick Chips */
     .chip-group {
       display: flex;
       gap: 6px;
     }
 
     .chip-btn {
-      background: rgba(255, 255, 255, 0.04);
+      background: var(--surface-elevated);
       border: 1px solid var(--border);
       border-radius: 6px;
       color: var(--text-muted);
@@ -265,9 +268,9 @@
       border-color: var(--accent);
     }
 
-    /* Action Buttons (Copy / Apply) */
+    /* Action Buttons */
     .icon-action-btn {
-      background: rgba(255, 255, 255, 0.04);
+      background: var(--surface-elevated);
       border: 1px solid var(--border);
       border-radius: 6px;
       color: var(--text-muted);
@@ -288,23 +291,23 @@
     }
 
     .icon-action-btn.btn-apply {
-      border-color: rgba(16, 185, 129, 0.35);
-      color: #34d399;
-      background: rgba(16, 185, 129, 0.06);
+      border-color: rgba(5, 150, 105, 0.30);
+      color: #059669;
+      background: rgba(5, 150, 105, 0.06);
     }
 
     .icon-action-btn.btn-apply:hover {
-      background: rgba(16, 185, 129, 0.15);
-      border-color: #34d399;
-      color: white;
+      background: rgba(5, 150, 105, 0.12);
+      border-color: #059669;
+      color: #065f46;
     }
 
     /* Textareas and Content Boxes */
     .prompt-box {
       width: 100%;
       height: 230px;
-      background: #0d111a;
-      border: 1px solid var(--border);
+      background: var(--surface-elevated);
+      border: 1.5px solid var(--border);
       border-radius: var(--radius-sm);
       padding: 14px;
       color: var(--text);
@@ -318,17 +321,18 @@
 
     .prompt-box:focus {
       border-color: var(--border-focus);
-      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+      background: var(--surface);
     }
 
     .golden-box {
       width: 100%;
       height: 230px;
-      background: #0d111a;
-      border: 1px solid var(--border);
+      background: var(--surface-elevated);
+      border: 1.5px solid var(--border);
       border-radius: var(--radius-sm);
       padding: 14px;
-      color: #cbd5e1;
+      color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.82rem;
       line-height: 1.55;
@@ -363,20 +367,22 @@
       justify-content: center;
       gap: 10px;
       transition: transform 0.1s, box-shadow 0.2s, filter 0.2s;
-      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.30);
       margin-bottom: 26px;
+      letter-spacing: -0.01em;
     }
 
     .primary-btn:hover {
-      filter: brightness(1.08);
-      box-shadow: 0 6px 24px rgba(99, 102, 241, 0.4);
+      filter: brightness(1.06);
+      box-shadow: 0 6px 22px rgba(99, 102, 241, 0.38);
+      transform: translateY(-1px);
     }
 
     .primary-btn:active {
-      transform: scale(0.995);
+      transform: scale(0.997);
     }
 
-    /* Assessment & LLM Effectiveness Dashboard */
+    /* Results Dashboard */
     .results-section {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -384,6 +390,7 @@
       padding: 24px;
       margin-bottom: 26px;
       display: block;
+      box-shadow: var(--shadow-sm);
     }
 
     /* Dual Performance Score Banner */
@@ -414,7 +421,7 @@
       width: 68px;
       height: 68px;
       border-radius: 50%;
-      background: #0d111a;
+      background: var(--surface);
       border: 3px solid var(--accent);
       display: flex;
       align-items: center;
@@ -423,6 +430,7 @@
       font-weight: 700;
       color: var(--text);
       flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
     }
 
     .score-info h4 {
@@ -480,7 +488,7 @@
     .pillar-bar-bg {
       width: 100%;
       height: 5px;
-      background: rgba(255, 255, 255, 0.06);
+      background: #e2e8f0;
       border-radius: 999px;
       overflow: hidden;
     }
@@ -508,20 +516,25 @@
     }
 
     .section-title {
-      font-size: 0.84rem;
-      font-weight: 600;
-      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-subtle);
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.06em;
       margin-bottom: 12px;
     }
 
     .feedback-item {
-      background: rgba(255, 255, 255, 0.02);
+      background: var(--surface-elevated);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       padding: 12px 14px;
       margin-bottom: 10px;
+      transition: border-color 0.15s;
+    }
+
+    .feedback-item:hover {
+      border-color: #c7d2e8;
     }
 
     .feedback-item strong {
@@ -546,9 +559,9 @@
       font-weight: 600;
     }
 
-    .badge-matched { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-    .badge-missing { background: rgba(244, 63, 94, 0.15); color: #fb7185; }
-    .badge-partial { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    .badge-matched { background: #dcfce7; color: #16a34a; }
+    .badge-missing  { background: #fee2e2; color: #dc2626; }
+    .badge-partial  { background: #fef3c7; color: #b45309; }
 
     /* Footer */
     footer {
@@ -566,7 +579,7 @@
     }
 
     footer a:hover {
-      color: #a5b4fc;
+      color: var(--accent-hover);
     }
   </style>
 </head>
@@ -603,10 +616,10 @@
             <div class="tab-btn active" style="padding: 2px 10px; display: inline-flex; align-items: center; gap: 6px;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
               <span>Sample Prompt:</span>
-              <select id="sampleSelect" onchange="switchScenarioTab(this.value)" style="background: transparent; color: #a5b4fc; border: none; font-weight: 600; font-size: 0.78rem; font-family: inherit; cursor: pointer; outline: none; padding: 4px 4px 4px 0;">
-                <option value="code" style="background: #161c2b; color: #f1f5f9;">💻 Code</option>
-                <option value="data" style="background: #161c2b; color: #f1f5f9;">📊 Data</option>
-                <option value="tutor" style="background: #161c2b; color: #f1f5f9;">🎓 Tutor</option>
+              <select id="sampleSelect" onchange="switchScenarioTab(this.value)" style="background: transparent; color: #4f46e5; border: none; font-weight: 600; font-size: 0.78rem; font-family: inherit; cursor: pointer; outline: none; padding: 4px 4px 4px 0;">
+                <option value="code" style="background: #ffffff; color: #1e2535;">💻 Code</option>
+                <option value="data" style="background: #ffffff; color: #1e2535;">📊 Data</option>
+                <option value="tutor" style="background: #ffffff; color: #1e2535;">🎓 Tutor</option>
               </select>
             </div>
           </div>
@@ -651,11 +664,11 @@
 
         <!-- LLM Effectiveness Index -->
         <div class="score-tile">
-          <div class="score-circle" id="llmScoreDisplay" style="border-color: var(--emerald);">--</div>
+          <div class="score-circle" id="llmScoreDisplay" style="border-color: #059669;">--</div>
           <div class="score-info">
             <h4>LLM Effectiveness Index</h4>
             <p id="llmReadinessDesc">Evaluating frontier LLM instruction following...</p>
-            <span class="tier-badge" id="llmTierBadge" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">Ready</span>
+            <span class="tier-badge" id="llmTierBadge" style="background: #dcfce7; color: #16a34a;">Ready</span>
           </div>
         </div>
       </div>
@@ -696,7 +709,7 @@
       <div class="panel" style="margin-bottom: 24px;">
         <div class="panel-header">
           <div class="panel-title">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--emerald);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: #059669;">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
             </svg>
             <span>Improved Golden Prompt</span>
@@ -720,7 +733,7 @@
         <div id="goldenDisplay" class="golden-box" style="height: 280px;"></div>
 
         <div class="panel-footer" style="margin-top: 10px;">
-          <span id="goldenEngineBadge" style="color: var(--accent); font-weight: 500;">⚡ Engineered dynamically by PyTorch Backend to improve given prompt</span>
+          <span id="goldenEngineBadge" style="color: var(--accent); font-weight: 500; font-size: 0.75rem;">⚡ Engineered dynamically by NLP Engine to improve given prompt</span>
           <span id="goldenCharCount">0 characters</span>
         </div>
       </div>
@@ -1215,17 +1228,17 @@ By isolating the core variables from ambient noise, the underlying behavior beco
 
     function setTierStyle(el, score) {
       if (score >= 85) {
-        el.style.background = 'rgba(16, 185, 129, 0.15)';
-        el.style.color = '#34d399';
+        el.style.background = '#dcfce7';
+        el.style.color = '#16a34a';
       } else if (score >= 70) {
-        el.style.background = 'rgba(99, 102, 241, 0.15)';
-        el.style.color = '#818cf8';
+        el.style.background = '#ede9fe';
+        el.style.color = '#6d28d9';
       } else if (score >= 50) {
-        el.style.background = 'rgba(245, 158, 11, 0.15)';
-        el.style.color = '#fbbf24';
+        el.style.background = '#fef3c7';
+        el.style.color = '#b45309';
       } else {
-        el.style.background = 'rgba(244, 63, 94, 0.15)';
-        el.style.color = '#fb7185';
+        el.style.background = '#fee2e2';
+        el.style.color = '#dc2626';
       }
     }
 
@@ -1315,12 +1328,12 @@ By isolating the core variables from ambient noise, the underlying behavior beco
       input.scrollIntoView({ behavior: 'smooth', block: 'center' });
       input.focus();
 
-      // Emerald visual pulse
-      input.style.borderColor = 'var(--emerald)';
-      input.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.25)';
+      // Emerald visual pulse (light theme)
+      input.style.borderColor = '#059669';
+      input.style.boxShadow = '0 0 0 3px rgba(5, 150, 105, 0.15)';
       setTimeout(() => {
-        input.style.borderColor = 'var(--border)';
-        input.style.boxShadow = 'none';
+        input.style.borderColor = '';
+        input.style.boxShadow = '';
       }, 1400);
 
       // Re-run assessment immediately
