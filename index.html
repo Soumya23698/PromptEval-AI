@@ -598,15 +598,21 @@
     <div class="input-section">
       <div class="panel">
         <div class="panel-header">
-          <div class="panel-title">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-            <span>Candidate Prompt</span>
-            <span class="tag tag-student">Input</span>
+          <!-- Code, Data, Tutor Tabs -->
+          <div class="prompt-tabs">
+            <button class="tab-btn active" id="tabCode" onclick="switchScenarioTab('code')">
+              <span>💻 Code</span>
+            </button>
+            <button class="tab-btn" id="tabData" onclick="switchScenarioTab('data')">
+              <span>📊 Data</span>
+            </button>
+            <button class="tab-btn" id="tabTutor" onclick="switchScenarioTab('tutor')">
+              <span>🎓 Tutor</span>
+            </button>
           </div>
 
-          <!-- Single Sample Prompt Tab / Button -->
-          <div class="chip-group">
-            <button class="chip-btn" onclick="loadSample('code')" title="Load Sample Prompt">💻 Sample Prompt</button>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="tag tag-student">Candidate Input</span>
           </div>
         </div>
 
@@ -779,9 +785,31 @@
       return false;
     }
 
-    function init() {
-      document.getElementById('studentInput').value = samplePrompts.code;
+    let activeScenario = 'code';
+
+    function switchScenarioTab(type) {
+      if (!samplePrompts[type]) return;
+      activeScenario = type;
+
+      // Update tab active classes
+      ['code', 'data', 'tutor'].forEach(t => {
+        const btn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (btn) {
+          if (t === type) btn.classList.add('active');
+          else btn.classList.remove('active');
+        }
+      });
+
+      // Update textarea value
+      document.getElementById('studentInput').value = samplePrompts[type];
       updateCharCount();
+
+      // Run assessment
+      runAssessment(false);
+    }
+
+    function init() {
+      switchScenarioTab('code');
       checkBackendHealth().then(() => {
         runAssessment(false);
       });
@@ -797,11 +825,7 @@
     document.getElementById('studentInput').addEventListener('input', updateCharCount);
 
     function loadSample(type) {
-      if (samplePrompts[type]) {
-        document.getElementById('studentInput').value = samplePrompts[type];
-        updateCharCount();
-        runAssessment(true);
-      }
+      switchScenarioTab(type);
     }
 
     function setGoldenDisplay(text, sourceBadge) {
@@ -894,7 +918,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            scenario: 'code',
+            scenario: activeScenario,
             student_prompt: studentText
           })
         });
