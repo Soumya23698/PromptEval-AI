@@ -692,33 +692,6 @@
         </div>
       </div>
 
-      <!-- LLM Execution Output Box -->
-      <div class="panel" style="margin-bottom: 24px;">
-        <div class="panel-header">
-          <div class="panel-title">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-            <span>LLM Output</span>
-            <span class="tag tag-student">Frontier Model</span>
-          </div>
-
-          <!-- Actions -->
-          <div style="display: flex; gap: 8px;">
-            <button class="icon-action-btn" id="copyOutputBtn" onclick="copyLLMOutput()" title="Copy LLM response">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-              <span id="copyOutputBtnText">Copy Output</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Preformatted LLM Output Display -->
-        <div id="llmOutputDisplay" class="golden-box" style="height: 280px; background: #080c13;"></div>
-
-        <div class="panel-footer" style="margin-top: 10px;">
-          <span id="outputModelBadge" style="color: var(--accent); font-weight: 500;">🤖 Predicted response from frontier LLMs (GPT-4o / Claude 3.5 / Gemini 1.5)</span>
-          <span id="outputCharCount">0 characters</span>
-        </div>
-      </div>
-
       <!-- Improved Golden Prompt Box -->
       <div class="panel" style="margin-bottom: 24px;">
         <div class="panel-header">
@@ -1238,14 +1211,6 @@ By isolating the core variables from ambient noise, the underlying behavior beco
       // Update Expert Golden Prompt
       const golden = res.expert_golden_prompt || res.improved_prompt || generateClientGolden(document.getElementById('studentInput').value);
       setGoldenDisplay(golden, engineSource);
-
-      // Update LLM Execution Outputs
-      let llmOutput = (res.outputs && res.outputs.student) ? res.outputs.student : "";
-      if (!llmOutput) {
-        const studentPrompt = document.getElementById('studentInput').value;
-        llmOutput = generateAccurateLLMOutput(studentPrompt, activeScenario);
-      }
-      setLLMOutputs(llmOutput);
     }
 
     function setTierStyle(el, score) {
@@ -1360,34 +1325,6 @@ By isolating the core variables from ambient noise, the underlying behavior beco
 
       // Re-run assessment immediately
       runAssessment(false);
-    }
-
-    // LLM Execution Output State & Functions
-    let currentOutputs = { student: "" };
-
-    function setLLMOutputs(output) {
-      currentOutputs.student = output || "No LLM output recorded.";
-      renderActiveOutput();
-    }
-
-    function renderActiveOutput() {
-      const display = document.getElementById('llmOutputDisplay');
-      if (!display) return;
-      display.innerText = currentOutputs.student;
-      const countEl = document.getElementById('outputCharCount');
-      if (countEl) countEl.innerText = `${currentOutputs.student.length} characters`;
-    }
-
-    function copyLLMOutput() {
-      const display = document.getElementById('llmOutputDisplay');
-      if (!display || !display.innerText) return;
-      navigator.clipboard.writeText(display.innerText).then(() => {
-        const btnText = document.getElementById('copyOutputBtnText');
-        if (btnText) {
-          btnText.innerText = "Copied! ✓";
-          setTimeout(() => { btnText.innerText = "Copy Output"; }, 2000);
-        }
-      });
     }
 
     window.addEventListener('DOMContentLoaded', init);
