@@ -447,35 +447,6 @@
       font-weight: 600;
     }
 
-    /* LLM Diagnostic Badges */
-    .llm-diagnostics-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .diag-item {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-    }
-
-    .diag-label {
-      font-size: 0.72rem;
-      color: var(--text-subtle);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 4px;
-    }
-
-    .diag-val {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-
     /* 4 Rubric Pillars */
     .pillars-grid {
       display: grid;
@@ -710,26 +681,6 @@
             <p id="llmReadinessDesc">Evaluating frontier LLM instruction following...</p>
             <span class="tier-badge" id="llmTierBadge" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">Ready</span>
           </div>
-        </div>
-      </div>
-
-      <!-- LLM Diagnostic Diagnostics -->
-      <div class="llm-diagnostics-grid">
-        <div class="diag-item">
-          <div class="diag-label">Hallucination Risk</div>
-          <div class="diag-val" id="diagHallucination">Evaluating...</div>
-        </div>
-        <div class="diag-item">
-          <div class="diag-label">Output Schema Contract</div>
-          <div class="diag-val" id="diagDeterminism">Evaluating...</div>
-        </div>
-        <div class="diag-item">
-          <div class="diag-label">Reasoning Scaffolding</div>
-          <div class="diag-val" id="diagReasoning">Evaluating...</div>
-        </div>
-        <div class="diag-item">
-          <div class="diag-label">Execution Reliability</div>
-          <div class="diag-val" id="diagExecution">High Precision</div>
         </div>
       </div>
 
@@ -975,12 +926,6 @@
       document.getElementById('llmReadinessDesc').innerText = llmMetrics.readiness || "Evaluated for modern frontier LLMs";
       llmTierBadge.innerText = llmScore >= 80 ? "Production Grade" : (llmScore >= 60 ? "Adequate" : "High Drift");
       setTierStyle(llmTierBadge, llmScore);
-
-      // LLM Diagnostic Badges
-      document.getElementById('diagHallucination').innerText = llmMetrics.hallucination_risk || (res.overall_score >= 80 ? "Low Risk" : "Moderate Risk");
-      document.getElementById('diagDeterminism').innerText = llmMetrics.formatting_determinism || "Strict Schema";
-      document.getElementById('diagReasoning').innerText = llmMetrics.reasoning_scaffold || "Stepwise Chain-of-Thought";
-      document.getElementById('diagExecution').innerText = llmScore >= 80 ? "High Determinism" : "Potential Variance";
 
       // 4 Rubrics
       const dims = res.dimensions;
