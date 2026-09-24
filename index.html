@@ -194,6 +194,53 @@
       border: 1px solid rgba(16, 185, 129, 0.25);
     }
 
+    /* Segmented Tab Switcher for Single Unified Prompt Portion */
+    .prompt-tabs {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      gap: 3px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+    }
+
+    .tab-btn.active {
+      background: var(--surface-elevated);
+      color: var(--text);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tab-badge {
+      font-size: 0.65rem;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      font-weight: 600;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
     /* Quick Chips for One-Click Testing */
     .chip-group {
       display: flex;
@@ -576,27 +623,59 @@
       </div>
     </header>
 
-    <!-- Single Student Input Portion -->
+    <!-- Single Unified Prompt Portion (Prompt & Designed Golden Prompt) -->
     <div class="input-section">
       <div class="panel">
         <div class="panel-header">
-          <div class="panel-title">
-            <span>Student Prompt</span>
-            <span class="tag tag-student">Candidate Input</span>
+          <!-- Segmented Tab Switcher (One Unified Portion) -->
+          <div class="prompt-tabs">
+            <button class="tab-btn active" id="tabStudent" onclick="switchPromptTab('student')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+              <span>Student Prompt</span>
+            </button>
+            <button class="tab-btn" id="tabGolden" onclick="switchPromptTab('golden')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--emerald);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <span>Designed Golden Prompt</span>
+              <span class="tab-badge" id="goldenTabBadge">AI Ready</span>
+            </button>
           </div>
-          <!-- 1-Click Test Prompts -->
-          <div class="chip-group">
+
+          <!-- Actions when on Student Tab -->
+          <div id="studentTabActions" class="chip-group">
             <button class="chip-btn" onclick="loadSample('code')" title="Python Refactoring">💻 Code</button>
             <button class="chip-btn" onclick="loadSample('data')" title="JSON Extraction">📊 Data</button>
             <button class="chip-btn" onclick="loadSample('tutor')" title="Socratic Tutoring">🎓 Tutor</button>
           </div>
+
+          <!-- Actions when on Golden Tab -->
+          <div id="goldenTabActions" style="display: none; gap: 8px;">
+            <button class="icon-action-btn" id="copyBtn" onclick="copyGoldenPrompt()" title="Copy prompt to clipboard">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span id="copyBtnText">Copy Prompt</span>
+            </button>
+            <button class="icon-action-btn btn-apply" id="applyBtn" onclick="applyGoldenPrompt()" title="Apply golden prompt to student prompt">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <span>Apply to Student Prompt</span>
+            </button>
+          </div>
         </div>
 
+        <!-- Student Candidate Textarea -->
         <textarea id="studentInput" class="prompt-box" placeholder="Type or paste candidate prompt to evaluate and optimize for LLMs..."></textarea>
         
-        <div class="panel-footer">
+        <!-- Expert Golden Display (Same Box) -->
+        <div id="goldenDisplay" class="golden-box" style="display: none;"></div>
+
+        <!-- Footer for Student View -->
+        <div class="panel-footer" id="studentFooter">
           <span><span id="wordCount">0</span> words &bull; <span id="charCount">0</span> characters</span>
           <span id="typingIndicator">Ready</span>
+        </div>
+
+        <!-- Footer for Golden View -->
+        <div class="panel-footer" id="goldenFooter" style="display: none;">
+          <span id="goldenEngineBadge" style="color: var(--accent); font-weight: 500;">⚡ Synthesized dynamically by PyTorch Backend NLP Engine</span>
+          <span id="goldenCharCount">0 characters</span>
         </div>
       </div>
     </div>
@@ -683,36 +762,6 @@
             <span id="pCompletenessScore">--</span>
           </div>
           <div class="pillar-bar-bg"><div class="pillar-bar-fill" id="barCompleteness"></div></div>
-        </div>
-      </div>
-
-      <!-- Single Dedicated Expert Golden Prompt Portion -->
-      <div class="golden-portion">
-        <div class="panel-header" style="margin-bottom: 12px;">
-          <div class="panel-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--emerald);">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-            </svg>
-            <span>Expert-Designed Golden Prompt</span>
-            <span class="tag tag-golden">LLM Optimized</span>
-          </div>
-          <div style="display: flex; gap: 8px;">
-            <button class="icon-action-btn" id="copyBtn" onclick="copyGoldenPrompt()" title="Copy prompt to clipboard">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-              <span id="copyBtnText">Copy Prompt</span>
-            </button>
-            <button class="icon-action-btn btn-apply" id="applyBtn" onclick="applyGoldenPrompt()" title="Apply prompt to input and test">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-              <span>Apply to Student Input</span>
-            </button>
-          </div>
-        </div>
-
-        <div id="goldenDisplay" class="golden-box" style="height: 240px;"></div>
-
-        <div class="panel-footer" style="margin-top: 10px;">
-          <span id="goldenEngineBadge" style="color: var(--accent); font-weight: 500;">⚡ Synthesized dynamically by PyTorch Backend NLP Engine</span>
-          <span id="goldenCharCount">0 characters</span>
         </div>
       </div>
 
@@ -963,6 +1012,13 @@
             <p>${s.body}</p>
           </div>`;
       });
+      sugHtml += `
+        <div style="margin-top: 12px;">
+          <button class="icon-action-btn btn-apply" onclick="switchPromptTab('golden'); document.querySelector('.input-section').scrollIntoView({ behavior: 'smooth', block: 'start' });" style="width: 100%; justify-content: center; padding: 8px 12px; font-size: 0.8rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <span>View Designed Golden Prompt Above</span>
+          </button>
+        </div>`;
       sugBox.innerHTML = sugHtml;
 
       // Update Expert Golden Prompt
@@ -1048,13 +1104,48 @@
       };
     }
 
+    let currentTab = 'student';
+
+    function switchPromptTab(tab) {
+      currentTab = tab;
+      const studentInput = document.getElementById('studentInput');
+      const goldenDisplay = document.getElementById('goldenDisplay');
+      const tabStudent = document.getElementById('tabStudent');
+      const tabGolden = document.getElementById('tabGolden');
+      const studentActions = document.getElementById('studentTabActions');
+      const goldenActions = document.getElementById('goldenTabActions');
+      const studentFooter = document.getElementById('studentFooter');
+      const goldenFooter = document.getElementById('goldenFooter');
+
+      if (tab === 'student') {
+        tabStudent.classList.add('active');
+        tabGolden.classList.remove('active');
+        studentInput.style.display = 'block';
+        goldenDisplay.style.display = 'none';
+        studentActions.style.display = 'flex';
+        goldenActions.style.display = 'none';
+        studentFooter.style.display = 'flex';
+        goldenFooter.style.display = 'none';
+        studentInput.focus();
+      } else {
+        tabGolden.classList.add('active');
+        tabStudent.classList.remove('active');
+        studentInput.style.display = 'none';
+        goldenDisplay.style.display = 'block';
+        studentActions.style.display = 'none';
+        goldenActions.style.display = 'flex';
+        studentFooter.style.display = 'none';
+        goldenFooter.style.display = 'flex';
+      }
+    }
+
     function copyGoldenPrompt() {
       const text = document.getElementById('goldenDisplay').innerText;
       if (!text) return;
       navigator.clipboard.writeText(text).then(() => {
         const btnText = document.getElementById('copyBtnText');
         btnText.innerText = "Copied! ✓";
-        setTimeout(() => { btnText.innerText = "Copy"; }, 2000);
+        setTimeout(() => { btnText.innerText = "Copy Prompt"; }, 2000);
       });
     }
 
@@ -1065,8 +1156,8 @@
       input.value = text;
       updateCharCount();
 
-      // Smooth scroll to input
-      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Switch back to Student Prompt tab in the single unified portion
+      switchPromptTab('student');
       input.focus();
 
       // Emerald visual pulse
