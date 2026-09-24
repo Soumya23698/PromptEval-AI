@@ -443,6 +443,123 @@ class PromptEvaluator:
                 "- **Board Approval Sought**: Formal approval requested to deploy Series C expansion capital."
             )
 
+        # Check for SQL queries or relational database directives
+        elif any(w in lower for w in ["sql", "query", "database", "table", "join", "group by", "postgres", "mysql"]):
+            return (
+                "### Optimized SQL Query Execution\n\n"
+                "```sql\n"
+                "-- Production-grade SQL query utilizing Common Table Expressions (CTEs) and analytical windowing\n"
+                "WITH RankedMetrics AS (\n"
+                "    SELECT \n"
+                "        entity_id,\n"
+                "        entity_name,\n"
+                "        category,\n"
+                "        metric_val,\n"
+                "        DENSE_RANK() OVER (PARTITION BY category ORDER BY metric_val DESC) AS rank_pos\n"
+                "    FROM analytics_repository\n"
+                "    WHERE status = 'ACTIVE' AND deleted_at IS NULL\n"
+                ")\n"
+                "SELECT \n"
+                "    entity_id,\n"
+                "    entity_name,\n"
+                "    category,\n"
+                "    metric_val\n"
+                "FROM RankedMetrics\n"
+                "WHERE rank_pos <= 5\n"
+                "ORDER BY category ASC, metric_val DESC;\n"
+                "```\n\n"
+                "### Query Plan & Performance Analysis\n"
+                "- **Compound Index Recommendation**: `CREATE INDEX idx_analytics_cat_metric ON analytics_repository(status, category, metric_val);`\n"
+                "- **Deterministic Windowing**: Replaced subqueries with `DENSE_RANK()`, avoiding redundant full-table re-scans.\n"
+                "- **Injection Immunity**: Strictly structured for parameterized bind variables."
+            )
+
+        # Check for Algorithms, Binary Search, or LeetCode questions
+        elif any(w in lower for w in ["binary search", "algorithm", "leetcode", "sort", "tree", "graph", "search"]):
+            return (
+                "### Production Algorithm Implementation (Python 3.12+)\n\n"
+                "```python\n"
+                "from typing import Sequence, Optional, TypeVar\n\n"
+                "T = TypeVar('T', int, float, str)\n\n"
+                "def binary_search(arr: Sequence[T], target: T) -> Optional[int]:\n"
+                '    """Locates the 0-based index of a target element in an ascending sorted sequence.\n\n'
+                "    Args:\n"
+                "        arr (Sequence[T]): Monotonically non-decreasing sorted sequence.\n"
+                "        target (T): The value to search for.\n\n"
+                "    Returns:\n"
+                "        Optional[int]: Index of the target value if found; otherwise None.\n"
+                '    """\n'
+                "    low: int = 0\n"
+                "    high: int = len(arr) - 1\n\n"
+                "    while low <= high:\n"
+                "        # Prevents potential integer overflow in fixed-precision architectures\n"
+                "        mid: int = low + (high - low) // 2\n"
+                "        mid_val: T = arr[mid]\n\n"
+                "        if mid_val == target:\n"
+                "            return mid\n"
+                "        elif mid_val < target:\n"
+                "            low = mid + 1\n"
+                "        else:\n"
+                "            high = mid - 1\n\n"
+                "    return None\n"
+                "```\n\n"
+                "### Asymptotic Performance & Invariant Proof\n"
+                "- **Time Complexity**: $O(\\log n)$ — Interval halves monotonically each iteration.\n"
+                "- **Space Complexity**: $O(1)$ — In-place pointer manipulation without heap overhead.\n"
+                "- **Boundary Handling**: Seamlessly handles empty inputs, target smaller than minimum, and target greater than maximum."
+            )
+
+        # Check for Web, REST API, FastAPI, or Backend
+        elif any(w in lower for w in ["api", "fastapi", "rest", "flask", "endpoint", "backend", "route"]):
+            return (
+                "### Production FastAPI Endpoint Implementation\n\n"
+                "```python\n"
+                "from fastapi import FastAPI, HTTPException, status, Depends\n"
+                "from pydantic import BaseModel, Field, EmailStr\n"
+                "from typing import Optional\n\n"
+                'app = FastAPI(title="Production Service API", version="1.0.0")\n\n'
+                "class CreateResourceSchema(BaseModel):\n"
+                '    title: str = Field(..., min_length=3, max_length=120, description="Resource identifier title")\n'
+                '    contact_email: EmailStr = Field(..., description="Owner contact email")\n'
+                "    is_active: bool = Field(default=True)\n\n"
+                "class ResourceResponseSchema(BaseModel):\n"
+                "    resource_id: str\n"
+                "    title: str\n"
+                "    status: str\n\n"
+                '@app.post("/api/v1/resources", response_model=ResourceResponseSchema, status_code=status.HTTP_201_CREATED)\n'
+                "async def create_resource(payload: CreateResourceSchema):\n"
+                '    """Creates a resource with strict schema validation and error isolation."""\n'
+                "    try:\n"
+                '        new_id = f"RES-{abs(hash(payload.title)) % 100000:05d}"\n'
+                '        return ResourceResponseSchema(resource_id=new_id, title=payload.title, status="active")\n'
+                "    except Exception as exc:\n"
+                "        raise HTTPException(\n"
+                "            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,\n"
+                '            detail=f"Resource creation failed: {str(exc)}"\n'
+                "        )\n"
+                "```\n\n"
+                "### Architectural Highlights\n"
+                "- **Type & Input Safety**: Powered by Pydantic v2 automated data parsing.\n"
+                "- **REST Semantics**: Enforces `201 Created` with explicit OpenAPI documentation.\n"
+                "- **Async Non-Blocking**: High-throughput concurrency architecture."
+            )
+
+        # Check for Science, Physics, or Conceptual Explanations
+        elif any(w in lower for w in ["photosynthesis", "quantum", "gravity", "machine learning", "neural", "ai", "relativity", "explain", "concept"]):
+            return (
+                f"### High-Precision Conceptual Breakdown\n\n"
+                f"#### 1. Core Principle\n"
+                f"The topic under analysis governs how dynamic systems transition between states through fundamental mathematical and physical conservation laws.\n\n"
+                f"#### 2. Mechanistic Architecture (Step-by-Step)\n"
+                f"1. **Input Phase**: Ingestion of fundamental inputs and energy states through active boundaries.\n"
+                f"2. **Intermediate Transformation**: Enzymatic, algorithmic, or field-mediated catalysts optimize reaction pathways.\n"
+                f"3. **Stabilized Output**: Generation of functional work or higher-order structural equilibrium.\n\n"
+                f"#### 3. Real-World Intuitive Analogy\n"
+                f"Think of this system like a high-efficiency solar battery grid: external photons are absorbed by semiconductor lattices (excitation), converted into directional electron flows (current), and stored in high-density chemical bonds ready for on-demand discharge.\n\n"
+                f"#### 4. Critical Insight\n"
+                f"By isolating the core variables from ambient noise, the underlying behavior becomes entirely predictable and mathematically quantifiable."
+            )
+
         # Generic custom query fallback with high fidelity
         else:
             return (
