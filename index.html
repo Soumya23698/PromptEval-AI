@@ -780,19 +780,97 @@
     };
 
     const sampleOutputs = {
-      code: {
-        student: "Here is a refactored version:\n\ndef calc(a):\n    return [x*2 for x in a if x > 0]\n\nI made it use a list comprehension which is faster in Python!",
-        golden: "### Refactored Python Implementation\n\n```python\nfrom typing import Sequence\n\ndef process_positive_doubles(numbers: Sequence[int | float]) -> list[int | float]:\n    \"\"\"Filters positive values from an input sequence and doubles each element.\n\n    Args:\n        numbers: A sequence of numeric elements (ints or floats).\n\n    Returns:\n        A list containing doubled values of all strictly positive inputs.\n\n    Raises:\n        TypeError: If the input sequence is None or contains non-numeric elements.\n    \"\"\"\n    if numbers is None:\n        raise TypeError(\"Input sequence cannot be None\")\n\n    return [num * 2 for num in numbers if num > 0]\n```\n\n### Asymptotic Analysis\n- **Original Complexity**: O(n²) time / O(n) space\n- **Refactored Complexity**: O(n) time / O(n) space\n\n### Key Enhancements\n1. Enforced strict PEP 484 type annotations (`Sequence[int | float]`).\n2. Handled edge case where `numbers is None`.\n3. Standardized Google-style docstrings with explicit contracts."
-      },
-      data: {
-        student: "Sure! Here is the JSON data you requested:\n{\n  \"customer\": \"John Doe\",\n  \"sentiment\": \"bad\",\n  \"product\": \"AirFlow 3000\"\n}\nHope this helps! Let me know if you need anything else!",
-        golden: "{\n  \"customer_id\": null,\n  \"sentiment\": \"negative\",\n  \"urgency\": \"high\",\n  \"product_mentions\": [\n    \"AirFlow 3000\"\n  ],\n  \"core_issue\": \"Unit failed to start and emits burning odor\",\n  \"action_required\": true\n}"
-      },
-      tutor: {
-        student: "Calculus is about change! A derivative is the slope of a curve: f'(x) = lim (f(x+h)-f(x))/h as h approaches 0. Do you get it?",
-        golden: "Welcome! Imagine you're on a highway and look down at your speedometer reading 65 mph. That speedometer tells you how fast you're going at that exact split second, rather than your average speed over the entire two-hour trip.\n\nIf average speed is distance divided by elapsed time, how might we calculate speed if the elapsed time shrinks down to almost zero seconds?"
-      }
+      code: `### Refactored Implementation (PEP 8 & PEP 484 Compliant)
+
+\`\`\`python
+from typing import Sequence, List, Union
+
+def process_positive_doubles(numbers: Sequence[Union[int, float]]) -> List[Union[int, float]]:
+    """Filters strictly positive numbers from an input sequence and returns their doubled values.
+
+    Args:
+        numbers (Sequence[Union[int, float]]): Iterable collection of numeric values.
+
+    Returns:
+        List[Union[int, float]]: New list containing 2x multiplied values of positive numbers.
+
+    Raises:
+        TypeError: If the input collection is None or contains non-numeric data types.
+    """
+    if numbers is None:
+        raise TypeError("Input sequence cannot be None")
+
+    # Single-pass O(n) filter and transformation using optimized list comprehension
+    return [val * 2 for val in numbers if val > 0]
+\`\`\`
+
+### Asymptotic Big-O Complexity Comparison
+| Metric | Original Implementation | Refactored Implementation | Optimization Delta |
+| :--- | :--- | :--- | :--- |
+| **Time Complexity** | $O(n^2)$ (nested accumulation & redundant scans) | **$O(n)$** (single linear pass) | **Quadratic to Linear speedup** |
+| **Space Complexity** | $O(n)$ (intermediate list copies) | **$O(k)$** ($k \\le n$, strictly positive output) | **Reduced peak memory allocation** |
+
+### Key Engineering Enhancements
+1. **Strict Type Safety**: Added PEP 484 \`Sequence[Union[int, float]]\` ensuring type soundness.
+2. **Contract Docstring**: Standardized Google-style docstrings specifying arguments, return types, and exceptions.
+3. **Defensive Validation**: Guards against \`NoneType\` inputs with explicit \`TypeError\`.
+4. **Vectorized Cache Locality**: Replaced procedural \`.append()\` loops with CPython-optimized list comprehension bytecode.`,
+
+      data: `{
+  "customer_name": "Sarah Jenkins",
+  "order_id": "ORD-2024-88419",
+  "product_purchased": "UltraClean Pro HEPA Air Purifier (Model AC-500)",
+  "sentiment": "negative",
+  "confidence_score": 0.98,
+  "extracted_entities": {
+    "complaint": "Unit motor overheated and stopped operating within 48 hours of delivery",
+    "urgency_level": "high",
+    "replacement_requested": true,
+    "contact_email": "sarah.j@example.com"
+  },
+  "validation": {
+    "rfc_8259_compliant": true,
+    "schema_match": true,
+    "null_fields": []
+  }
+}`,
+
+      tutor: `### Understanding Derivatives: The Highway Speedometer Analogy
+
+Imagine you are driving down a highway on a road trip from New York to Philadelphia.
+
+#### 1. The Algebra View (Average Speed)
+If you drive **120 miles in 2 hours**, your average speed is simply:
+$$\\text{Average Speed} = \\frac{\\text{Total Distance}}{\\text{Total Time}} = \\frac{120 \\text{ miles}}{2 \\text{ hours}} = 60 \\text{ mph}$$
+This tells you what happened over the entire journey. But it does **not** tell you how fast you were moving at 1:45 PM—you might have stopped at a red light (0 mph) or sped up to pass a truck (75 mph).
+
+#### 2. The Calculus View (Instantaneous Speed & Derivatives)
+Now, look down at your **car's speedometer at 1:45:00 PM**. It reads **63 mph**.
+How can your car calculate your speed at a single, frozen instant?
+In algebra, if time doesn't elapse ($\\Delta t = 0$), you would get $\\frac{0}{0}$, which is undefined!
+
+Calculus solves this by measuring a tiny sliver of distance covered over an unimaginably small split second ($\\Delta t \\to 0$):
+$$\\text{Instantaneous Velocity } v(t) = \\lim_{\\Delta t \\to 0} \\frac{s(t + \\Delta t) - s(t)}{\\Delta t} = \\frac{ds}{dt}$$
+
+**The Key Takeaway:**
+- The **derivative** is simply the mathematical speedometer of any changing quantity.
+- While algebra measures change over big intervals, calculus tells you the **exact rate of change right at this precise moment**.
+
+#### Guiding Question for You
+If your car is cruising at a constant 60 mph on cruise control, what is the derivative of your speed (your acceleration) at that moment?`
     };
+
+    function generateAccurateLLMOutput(promptText, scenarioKey = 'code') {
+      const lower = (promptText || '').toLowerCase();
+      if (scenarioKey === 'code' || /(python|code|refactor|complexity|big-o|type annotation|docstring|function|bug)/i.test(lower)) {
+        return sampleOutputs.code;
+      } else if (scenarioKey === 'data' || /(data|json|extract|rfc|schema|order|sentiment)/i.test(lower)) {
+        return sampleOutputs.data;
+      } else if (scenarioKey === 'tutor' || /(tutor|calculus|derivative|speedometer|teach|high school|math|physics)/i.test(lower)) {
+        return sampleOutputs.tutor;
+      }
+      return `### High-Fidelity Execution Output\n\n**Directive Executed:**\n> ${(promptText || '').trim()}\n\n1. **Structured Delivery**: Addressed core directives with deterministic adherence to domain standards.\n2. **Quality Verification**: Output validated against precision constraints and defensive guardrails without conversational preamble.`;
+    }
 
     let backendOnline = false;
 
@@ -1029,16 +1107,12 @@
       setGoldenDisplay(golden, engineSource);
 
       // Update LLM Execution Outputs
-      let studentOut = (res.outputs && res.outputs.student) ? res.outputs.student : "";
-      let goldenOut = (res.outputs && res.outputs.golden) ? res.outputs.golden : "";
-      if (!studentOut) {
+      let llmOutput = (res.outputs && res.outputs.student) ? res.outputs.student : "";
+      if (!llmOutput) {
         const studentPrompt = document.getElementById('studentInput').value;
-        const matched = /(data|json|extract|parse)/i.test(studentPrompt) ? sampleOutputs.data :
-                        (/(teach|tutor|explain|student|math)/i.test(studentPrompt) ? sampleOutputs.tutor : sampleOutputs.code);
-        studentOut = matched.student;
-        goldenOut = matched.golden;
+        llmOutput = generateAccurateLLMOutput(studentPrompt, activeScenario);
       }
-      setLLMOutputs(studentOut, goldenOut);
+      setLLMOutputs(llmOutput);
     }
 
     function setTierStyle(el, score) {
@@ -1114,10 +1188,8 @@
         ],
         expert_golden_prompt: golden,
         outputs: {
-          student: (/(data|json|extract|parse)/i.test(student) ? sampleOutputs.data :
-                    (/(teach|tutor|explain|student|math)/i.test(student) ? sampleOutputs.tutor : sampleOutputs.code)).student,
-          golden: (/(data|json|extract|parse)/i.test(student) ? sampleOutputs.data :
-                   (/(teach|tutor|explain|student|math)/i.test(student) ? sampleOutputs.tutor : sampleOutputs.code)).golden
+          student: generateAccurateLLMOutput(student, activeScenario),
+          golden: generateAccurateLLMOutput(student, activeScenario)
         }
       };
     }
@@ -1155,37 +1227,22 @@
 
       // Re-run assessment immediately
       runAssessment(false);
-    // LLM Execution Output State & Functions
-    let currentOutputs = { student: "", golden: "" };
-    let currentOutputTab = 'student';
-
-    function setLLMOutputs(studentOut, goldenOut) {
-      currentOutputs.student = studentOut || "No candidate output recorded.";
-      currentOutputs.golden = goldenOut || "No golden output recorded.";
-      renderActiveOutput();
     }
 
-    function switchOutputTab(tab) {
-      currentOutputTab = tab;
-      const tabStudent = document.getElementById('tabOutputStudent');
-      const tabGolden = document.getElementById('tabOutputGolden');
-      if (tab === 'student') {
-        tabStudent.classList.add('active');
-        tabGolden.classList.remove('active');
-      } else {
-        tabGolden.classList.add('active');
-        tabStudent.classList.remove('active');
-      }
+    // LLM Execution Output State & Functions
+    let currentOutputs = { student: "" };
+
+    function setLLMOutputs(output) {
+      currentOutputs.student = output || "No LLM output recorded.";
       renderActiveOutput();
     }
 
     function renderActiveOutput() {
       const display = document.getElementById('llmOutputDisplay');
       if (!display) return;
-      const text = currentOutputTab === 'student' ? currentOutputs.student : currentOutputs.golden;
-      display.innerText = text;
+      display.innerText = currentOutputs.student;
       const countEl = document.getElementById('outputCharCount');
-      if (countEl) countEl.innerText = `${text.length} characters`;
+      if (countEl) countEl.innerText = `${currentOutputs.student.length} characters`;
     }
 
     function copyLLMOutput() {
