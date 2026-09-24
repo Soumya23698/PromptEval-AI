@@ -719,6 +719,39 @@
         </div>
       </div>
 
+      <!-- Improved Golden Prompt Box -->
+      <div class="panel" style="margin-bottom: 24px;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--emerald);">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            <span>Improved Golden Prompt</span>
+            <span class="tag tag-golden">AI Engineered</span>
+          </div>
+
+          <!-- Actions -->
+          <div style="display: flex; gap: 8px;">
+            <button class="icon-action-btn" id="copyGoldenBtn" onclick="copyGoldenPrompt()" title="Copy improved prompt">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span id="copyGoldenBtnText">Copy Prompt</span>
+            </button>
+            <button class="icon-action-btn btn-apply" id="applyGoldenBtn" onclick="applyGoldenPrompt()" title="Apply to improve given prompt">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <span>Apply to Given Prompt</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Preformatted Golden Display -->
+        <div id="goldenDisplay" class="golden-box" style="height: 200px;"></div>
+
+        <div class="panel-footer" style="margin-top: 10px;">
+          <span id="goldenEngineBadge" style="color: var(--accent); font-weight: 500;">⚡ Engineered dynamically by PyTorch Backend to improve given prompt</span>
+          <span id="goldenCharCount">0 characters</span>
+        </div>
+      </div>
+
       <!-- Gap Analysis & LLM Optimization Suggestions -->
       <div class="feedback-columns">
         <div>
@@ -1089,48 +1122,15 @@
       };
     }
 
-    let currentTab = 'student';
-
-    function switchPromptTab(tab) {
-      currentTab = tab;
-      const studentInput = document.getElementById('studentInput');
-      const goldenDisplay = document.getElementById('goldenDisplay');
-      const tabStudent = document.getElementById('tabStudent');
-      const tabGolden = document.getElementById('tabGolden');
-      const studentActions = document.getElementById('studentTabActions');
-      const goldenActions = document.getElementById('goldenTabActions');
-      const studentFooter = document.getElementById('studentFooter');
-      const goldenFooter = document.getElementById('goldenFooter');
-
-      if (tab === 'student') {
-        tabStudent.classList.add('active');
-        tabGolden.classList.remove('active');
-        studentInput.style.display = 'block';
-        goldenDisplay.style.display = 'none';
-        studentActions.style.display = 'flex';
-        goldenActions.style.display = 'none';
-        studentFooter.style.display = 'flex';
-        goldenFooter.style.display = 'none';
-        studentInput.focus();
-      } else {
-        tabGolden.classList.add('active');
-        tabStudent.classList.remove('active');
-        studentInput.style.display = 'none';
-        goldenDisplay.style.display = 'block';
-        studentActions.style.display = 'none';
-        goldenActions.style.display = 'flex';
-        studentFooter.style.display = 'none';
-        goldenFooter.style.display = 'flex';
-      }
-    }
-
     function copyGoldenPrompt() {
       const text = document.getElementById('goldenDisplay').innerText;
       if (!text) return;
       navigator.clipboard.writeText(text).then(() => {
-        const btnText = document.getElementById('copyBtnText');
-        btnText.innerText = "Copied! ✓";
-        setTimeout(() => { btnText.innerText = "Copy Prompt"; }, 2000);
+        const btnText = document.getElementById('copyGoldenBtnText') || document.getElementById('copyBtnText');
+        if (btnText) {
+          btnText.innerText = "Copied! ✓";
+          setTimeout(() => { btnText.innerText = "Copy Prompt"; }, 2000);
+        }
       });
     }
 
@@ -1141,8 +1141,8 @@
       input.value = text;
       updateCharCount();
 
-      // Switch back to Student Prompt tab in the single unified portion
-      switchPromptTab('student');
+      // Smooth scroll to candidate prompt input
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
       input.focus();
 
       // Emerald visual pulse
@@ -1155,8 +1155,6 @@
 
       // Re-run assessment immediately
       runAssessment(false);
-    }
-
     // LLM Execution Output State & Functions
     let currentOutputs = { student: "", golden: "" };
     let currentOutputTab = 'student';
