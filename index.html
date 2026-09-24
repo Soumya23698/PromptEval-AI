@@ -1032,10 +1032,7 @@
           completeness: { score: comp }
         },
         llm_metrics: {
-          readiness: overall >= 80 ? "Production Ready for Frontier LLMs" : "Adequate (Add Guardrails)",
-          hallucination_risk: comp >= 60 ? "Low Risk (Bounded)" : "High Risk (Unconstrained)",
-          formatting_determinism: comp >= 60 ? "Strict Machine Schema" : "Unconstrained / Prose",
-          reasoning_scaffold: struct >= 60 ? "Stepwise Scaffolding Active" : "Direct Zero-Shot"
+          readiness: overall >= 80 ? "Production Ready for Frontier LLMs" : "Adequate (Add Guardrails)"
         },
         gap_analysis: [
           { status: struct >= 60 ? "matched" : "missing", title: "Role Conditioning", description: struct >= 60 ? "Persona assigned to orient model latent attention." : "Missing role persona anchor; model defaults to generic style." },
