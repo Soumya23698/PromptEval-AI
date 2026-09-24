@@ -716,6 +716,40 @@
         </div>
       </div>
 
+      <!-- LLM Execution Output Box -->
+      <div class="panel" style="margin-bottom: 24px;">
+        <div class="panel-header">
+          <!-- Segmented Tab Switcher for Outputs -->
+          <div class="prompt-tabs">
+            <button class="tab-btn active" id="tabOutputStudent" onclick="switchOutputTab('student')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              <span>LLM Output (Candidate Prompt)</span>
+            </button>
+            <button class="tab-btn" id="tabOutputGolden" onclick="switchOutputTab('golden')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--emerald);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <span>LLM Output (Golden Prompt)</span>
+              <span class="tab-badge" id="outputQualityBadge">Optimized</span>
+            </button>
+          </div>
+
+          <!-- Actions -->
+          <div style="display: flex; gap: 8px;">
+            <button class="icon-action-btn" id="copyOutputBtn" onclick="copyLLMOutput()" title="Copy LLM response">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span id="copyOutputBtnText">Copy Output</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Preformatted LLM Output Display -->
+        <div id="llmOutputDisplay" class="golden-box" style="height: 200px; background: #080c13;"></div>
+
+        <div class="panel-footer" style="margin-top: 10px;">
+          <span id="outputModelBadge" style="color: var(--accent); font-weight: 500;">🤖 Predicted response from frontier LLMs (GPT-4o / Claude 3.5 / Gemini 1.5)</span>
+          <span id="outputCharCount">0 characters</span>
+        </div>
+      </div>
+
       <!-- Gap Analysis & LLM Optimization Suggestions -->
       <div class="feedback-columns">
         <div>
@@ -741,6 +775,21 @@
       code: "Act as a software engineer. Refactor this python code for better performance, add type annotations and docstrings. Explain the Big-O complexity difference.",
       data: "Extract customer name, order ID, product purchased, and sentiment from this user message and return it in strictly valid RFC JSON format.",
       tutor: "Explain how derivatives work in calculus to a high school student using a simple physical analogy like a car speedometer."
+    };
+
+    const sampleOutputs = {
+      code: {
+        student: "Here is a refactored version:\n\ndef calc(a):\n    return [x*2 for x in a if x > 0]\n\nI made it use a list comprehension which is faster in Python!",
+        golden: "### Refactored Python Implementation\n\n```python\nfrom typing import Sequence\n\ndef process_positive_doubles(numbers: Sequence[int | float]) -> list[int | float]:\n    \"\"\"Filters positive values from an input sequence and doubles each element.\n\n    Args:\n        numbers: A sequence of numeric elements (ints or floats).\n\n    Returns:\n        A list containing doubled values of all strictly positive inputs.\n\n    Raises:\n        TypeError: If the input sequence is None or contains non-numeric elements.\n    \"\"\"\n    if numbers is None:\n        raise TypeError(\"Input sequence cannot be None\")\n\n    return [num * 2 for num in numbers if num > 0]\n```\n\n### Asymptotic Analysis\n- **Original Complexity**: O(n²) time / O(n) space\n- **Refactored Complexity**: O(n) time / O(n) space\n\n### Key Enhancements\n1. Enforced strict PEP 484 type annotations (`Sequence[int | float]`).\n2. Handled edge case where `numbers is None`.\n3. Standardized Google-style docstrings with explicit contracts."
+      },
+      data: {
+        student: "Sure! Here is the JSON data you requested:\n{\n  \"customer\": \"John Doe\",\n  \"sentiment\": \"bad\",\n  \"product\": \"AirFlow 3000\"\n}\nHope this helps! Let me know if you need anything else!",
+        golden: "{\n  \"customer_id\": null,\n  \"sentiment\": \"negative\",\n  \"urgency\": \"high\",\n  \"product_mentions\": [\n    \"AirFlow 3000\"\n  ],\n  \"core_issue\": \"Unit failed to start and emits burning odor\",\n  \"action_required\": true\n}"
+      },
+      tutor: {
+        student: "Calculus is about change! A derivative is the slope of a curve: f'(x) = lim (f(x+h)-f(x))/h as h approaches 0. Do you get it?",
+        golden: "Welcome! Imagine you're on a highway and look down at your speedometer reading 65 mph. That speedometer tells you how fast you're going at that exact split second, rather than your average speed over the entire two-hour trip.\n\nIf average speed is distance divided by elapsed time, how might we calculate speed if the elapsed time shrinks down to almost zero seconds?"
+      }
     };
 
     let backendOnline = false;
@@ -969,6 +1018,18 @@
       // Update Expert Golden Prompt
       const golden = res.expert_golden_prompt || res.improved_prompt || generateClientGolden(document.getElementById('studentInput').value);
       setGoldenDisplay(golden, engineSource);
+
+      // Update LLM Execution Outputs
+      let studentOut = (res.outputs && res.outputs.student) ? res.outputs.student : "";
+      let goldenOut = (res.outputs && res.outputs.golden) ? res.outputs.golden : "";
+      if (!studentOut) {
+        const studentPrompt = document.getElementById('studentInput').value;
+        const matched = /(data|json|extract|parse)/i.test(studentPrompt) ? sampleOutputs.data :
+                        (/(teach|tutor|explain|student|math)/i.test(studentPrompt) ? sampleOutputs.tutor : sampleOutputs.code);
+        studentOut = matched.student;
+        goldenOut = matched.golden;
+      }
+      setLLMOutputs(studentOut, goldenOut);
     }
 
     function setTierStyle(el, score) {
@@ -1042,7 +1103,13 @@
           { title: "Anchor Domain Persona", body: "Start prompts with 'You are a Senior [Specialist]' to calibrate model depth." },
           { title: "Define Explicit Negative Bounds", body: "State what NOT to do: 'Do not use external libraries' to prevent model hallucinations." }
         ],
-        expert_golden_prompt: golden
+        expert_golden_prompt: golden,
+        outputs: {
+          student: (/(data|json|extract|parse)/i.test(student) ? sampleOutputs.data :
+                    (/(teach|tutor|explain|student|math)/i.test(student) ? sampleOutputs.tutor : sampleOutputs.code)).student,
+          golden: (/(data|json|extract|parse)/i.test(student) ? sampleOutputs.data :
+                   (/(teach|tutor|explain|student|math)/i.test(student) ? sampleOutputs.tutor : sampleOutputs.code)).golden
+        }
       };
     }
 
@@ -1112,6 +1179,51 @@
 
       // Re-run assessment immediately
       runAssessment(false);
+    }
+
+    // LLM Execution Output State & Functions
+    let currentOutputs = { student: "", golden: "" };
+    let currentOutputTab = 'student';
+
+    function setLLMOutputs(studentOut, goldenOut) {
+      currentOutputs.student = studentOut || "No candidate output recorded.";
+      currentOutputs.golden = goldenOut || "No golden output recorded.";
+      renderActiveOutput();
+    }
+
+    function switchOutputTab(tab) {
+      currentOutputTab = tab;
+      const tabStudent = document.getElementById('tabOutputStudent');
+      const tabGolden = document.getElementById('tabOutputGolden');
+      if (tab === 'student') {
+        tabStudent.classList.add('active');
+        tabGolden.classList.remove('active');
+      } else {
+        tabGolden.classList.add('active');
+        tabStudent.classList.remove('active');
+      }
+      renderActiveOutput();
+    }
+
+    function renderActiveOutput() {
+      const display = document.getElementById('llmOutputDisplay');
+      if (!display) return;
+      const text = currentOutputTab === 'student' ? currentOutputs.student : currentOutputs.golden;
+      display.innerText = text;
+      const countEl = document.getElementById('outputCharCount');
+      if (countEl) countEl.innerText = `${text.length} characters`;
+    }
+
+    function copyLLMOutput() {
+      const display = document.getElementById('llmOutputDisplay');
+      if (!display || !display.innerText) return;
+      navigator.clipboard.writeText(display.innerText).then(() => {
+        const btnText = document.getElementById('copyOutputBtnText');
+        if (btnText) {
+          btnText.innerText = "Copied! ✓";
+          setTimeout(() => { btnText.innerText = "Copy Output"; }, 2000);
+        }
+      });
     }
 
     window.addEventListener('DOMContentLoaded', init);
